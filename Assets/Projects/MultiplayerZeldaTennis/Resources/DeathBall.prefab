@@ -691,7 +691,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigidbody: {fileID: 5432748}
   Velocity: {x: 0, y: 0, z: 0}
-  Speed: 10
+  Speed: 0
   BounceEffectPrefab: {fileID: 0}
 --- !u!114 &11458738
 MonoBehaviour:
@@ -811,6 +811,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: Speed
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

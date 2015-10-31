@@ -19,7 +19,6 @@ public class NetworkManager : MonoBehaviour {
     public string PlayerName = "Player Name";
     public GameState m_CurrentGamestate;
     
- 
 
     // Use this for initialization
     void Start () {
@@ -84,7 +83,7 @@ public class NetworkManager : MonoBehaviour {
         {
             
             if(deathBall == null && PhotonNetwork.isMasterClient )
-                deathBall = PhotonNetwork.Instantiate(deathBallPrefab.name, Vector3.up * .5f + Vector3.forward * 2f, Quaternion.identity, 0);
+                deathBall = PhotonNetwork.Instantiate(deathBallPrefab.name, Vector3.up * .5f, Quaternion.identity, 0);
         }
         
         SpawnPlayer(PhotonNetwork.playerList.Length -1);

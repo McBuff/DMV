@@ -9,12 +9,13 @@ public class CC_Emitter : MonoBehaviour {
     public float KnockBack_Duration = .5f;
 
     public float Stun_Duration = .5f;
+
     
 
     // Use this for initialization
     void Start () {
-	    
-	}
+
+    }
 	
 	// Update is called once per frame
 	void Update () {

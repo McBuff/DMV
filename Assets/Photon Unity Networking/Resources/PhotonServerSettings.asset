@@ -32,4 +32,6 @@ MonoBehaviour:
   - PunPickupSimple
   - PunRespawn
   - RequestForPickupTimes
+  - SetPlayerState
+  - ChangeBallTrajectory
   DisableAutoOpenWizard: 1

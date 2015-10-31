@@ -1,13 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class DeathBall : Photon.MonoBehaviour {
 
     public Rigidbody rigidbody;
 
 
+    // Movement
     public Vector3 Velocity;
     public float Speed = 10f;
+
+    private float SpeedIncreaseOnHit = .5f;
 
     // synching
     private float syncTime = 0f;
@@ -299,6 +303,30 @@ public class DeathBall : Photon.MonoBehaviour {
     }
 
 
+
+    /// <summary>
+    /// CLIENTSIDE METHOD, the owner of the weapon that hits this ball calls this method
+    /// </summary>
+    /// <param name="newDirection"></param>
+    public void DoBallHit(Vector3 newDirection, Vector3 hitPosition) {
+
+        // If speed is 0, give start speed, else increase speed by flat amount
+        float newSpeed = Speed;
+
+        if (Speed == 0f)
+            newSpeed = 10.0f; // todo: tie to variable
+        else newSpeed += .5f;
+
+        Velocity = newDirection;
+        transform.position = hitPosition;
+        object[] parameters = { hitPosition, newDirection, newSpeed , m_Lifetime };
+
+        photonView.RPC("ChangeBallTrajectory", PhotonTargets.Others, parameters);
+        
+    }
+
+    // NETWORK CODE
+    // -----
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.isWriting)
@@ -357,5 +385,46 @@ public class DeathBall : Photon.MonoBehaviour {
 
     }
 
+    [PunRPC]
+    void ChangeBallTrajectory(Vector3 startpos,  Vector3 newDirection, float newSpeed , float EventTime)
+    {
+        // received dir, speed and time, add fake package in packet stream
+
+        Speed = newSpeed;
+        Velocity = newDirection;
+        
+
+        networkData fakePackage = new networkData();
+        fakePackage.P = startpos;
+        fakePackage.V = newDirection;
+        fakePackage.Lifetime = EventTime;
+
+        //InsertPackage(fakePackage);
+
+    }
+
+    private void InsertPackage(networkData newPackage) {
+
+        int insertPosition = 0;
+        float previousLifetime = 0 ;
+
+        // insert package into stream at correct position
+        for (int i = 0; i < m_NetworkPackages.Count; i++)
+        {
+            networkData listedPacket = (networkData)m_NetworkPackages[i];
+            
+            if( previousLifetime < newPackage.Lifetime && newPackage.Lifetime < listedPacket.Lifetime)
+            {
+                insertPosition = i;
+            }
+
+            previousLifetime = listedPacket.Lifetime;           
+
+        }
+
+        m_NetworkPackages.Insert(insertPosition, newPackage);
+
+
+    }
     
 }

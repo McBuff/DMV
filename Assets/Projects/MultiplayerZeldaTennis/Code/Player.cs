@@ -7,6 +7,12 @@ public class Player : Photon.MonoBehaviour
     public float speed = 5f;
 
     public Rigidbody rigidbody;
+    public Player_Weapon m_Weapon;
+
+    // State Machine related:
+    //-----------------------
+    private PlayerState m_CurrentState;
+    private float m_CurrentStateStartTime;
 
     // State synchronisation
     //-----------------------
@@ -51,6 +57,9 @@ public class Player : Photon.MonoBehaviour
     {
         m_NetworkPackagesList = new ArrayList();
         rigidbody = GetComponent<Rigidbody>();
+
+        m_CurrentState = PlayerState.movement;
+        m_CurrentStateStartTime = 0;
     }
     void Update()
     {
@@ -58,10 +67,55 @@ public class Player : Photon.MonoBehaviour
 
         rigidbody = GetComponent<Rigidbody>();
 
+        //DBUG: Set the text above the player head to current state
+        TextMesh text = GetComponentInChildren<TextMesh>();
+        text.text = m_CurrentState.ToString();
+
         if (photonView.isMine)
         {
-            InputMovement();
-            InputLookat();
+
+
+            // act on current state
+            switch (m_CurrentState)
+            {
+                case PlayerState.movement:
+                    InputMovement();
+                    InputLookat();
+
+                    if (Attack_Primary_Down())
+                    {
+                        
+                        object[] parameters = { PlayerState.attacking, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y };
+                        photonView.RPC("SetPlayerState", PhotonTargets.Others, parameters);
+                        SetPlayerState((int) PlayerState.attacking, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y);
+                    }
+
+                    break;
+                case PlayerState.attacking:
+
+                    if (m_Lifetime - m_CurrentStateStartTime > .3f)
+                    {
+                        object[] parameters = { PlayerState.movement, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y };
+                        photonView.RPC("SetPlayerState", PhotonTargets.Others, parameters);
+                        SetPlayerState((int)PlayerState.movement, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y);
+                    }
+
+                    if (Attack_Primary_Down())
+                    {
+
+                        object[] parameters = { PlayerState.attacking, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y };
+                        photonView.RPC("SetPlayerState", PhotonTargets.Others, parameters);
+                        SetPlayerState((int)PlayerState.attacking, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y);
+                    }
+
+                    break;
+                case PlayerState.launched:
+                    break;
+                case PlayerState.frozen:
+                    break;
+                default:
+                    break;
+            }
         }
         else
         {
@@ -196,6 +250,12 @@ public class Player : Photon.MonoBehaviour
 
     }
 
+    bool Attack_Primary_Down() {
+        if (Input.GetMouseButtonDown(0)) {
+            return true;
+        }
+        return false;
+    }
     /// <summary>
     /// Estimate where a player is given a startpos, and a direction.
     /// Works 2 ways.
@@ -251,6 +311,32 @@ public class Player : Photon.MonoBehaviour
 
         return adjusteddirection;
     }
+
+   
+
+    // NETWORK
+    // -------
+
+    [PunRPC]
+    void SetPlayerState(int newState, float EventTime, Vector3 playerPosition, Vector3 playerDirection, float playerOrientation) {
+
+        // convert state to State
+        PlayerState newPlayerState = (PlayerState)(newState);
+
+        m_CurrentState = newPlayerState;
+        m_CurrentStateStartTime = EventTime;
+
+
+        if (newPlayerState == PlayerState.attacking)
+        {
+            // enable attack weapon thing and fire it
+            m_Weapon.gameObject.SetActive(true);
+            m_Weapon.Attack(playerOrientation);
+        }
+
+    }
+
+
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
@@ -309,3 +395,9 @@ public class Player : Photon.MonoBehaviour
     
 }
 
+public enum PlayerState{
+    movement,
+    attacking,
+    launched,
+    frozen
+}
