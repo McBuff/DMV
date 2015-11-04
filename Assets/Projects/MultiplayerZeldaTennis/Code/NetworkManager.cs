@@ -82,8 +82,10 @@ public class NetworkManager : MonoBehaviour {
         if (PhotonNetwork.playerList.Length > 0 && PhotonNetwork.isMasterClient)
         {
             
+            /*
             if(deathBall == null && PhotonNetwork.isMasterClient )
                 deathBall = PhotonNetwork.Instantiate(deathBallPrefab.name, Vector3.up * .5f, Quaternion.identity, 0);
+                */
         }
         
         SpawnPlayer(PhotonNetwork.playerList.Length -1);

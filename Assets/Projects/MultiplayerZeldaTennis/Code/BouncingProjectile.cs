@@ -15,13 +15,16 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     public Vector3 Direction;
     public float MovementSpeed;
 
-
+    private Projectile2DState m_lastUsedPacket;
+    private float m_PacketTime;
+    private float m_gameTimeOfLastPacketAssign;
 
     // Network Data:
     //------------------
 
     private float TrueGameTime;
-    private float ArticifialDelay = 2f;
+    public float ArticifialDelay = 0f;
+    
     private List<Projectile2DState> m_PacketBuffer;
 
 
@@ -37,8 +40,8 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         TrueGameTime += Time.deltaTime;
 
        if (photonView.isMine)
-            Update_Server();
-        else Update_NetSync();
+            Update_ServerCompute();
+        else Update_ClientPredict();
 	}
 
     void DrawBuffer( Color color)
@@ -55,6 +58,12 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         }
 
     }
+
+    #region Updates
+
+    /// <summary>
+    /// basic interpolation network sync. Standard LERP
+    /// </summary>
     void Update_NetSync() {
 
         if (m_PacketBuffer.Count > 1)
@@ -75,15 +84,152 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
     }
 
-    void Update_Server() {
+    /// <summary>
+    /// Clientside prediction algorithm, for players posessing this object
+    /// </summary>
+    void Update_ClientPredict() {
+
+        // get most recent package and calculate position from there?
+
+
+        if (m_PacketBuffer.Count > 0)
+        {
+
+
+            // init variables
+
+            //Projectile2DState lastPackage = GetLastPackage();
+            Projectile2DState currentPackage = GetPackageBefore( PhotonNetwork.time - ArticifialDelay);
+
+            Vector3 serverPos = currentPackage.Position3();
+            Vector3 serverDir = currentPackage.Direction3();
+            double serverTime = currentPackage.stateTime;
+
+            // if this is the first cycle, we overwrite our local data, and simulate using that data.
+            
+            float timeInState = (float)(PhotonNetwork.time - ArticifialDelay - serverTime);
+            DrawPackageInfo(currentPackage, Color.magenta);
+            // if I'm on a new package this update, put the ball in the spot it's supposed to be
+            if (m_lastUsedPacket.stateTime < serverTime)
+            {
+                Direction = serverDir; // override direction
+                transform.position = serverPos; // override position
+            }
+
+            Vector3 translation = Direction * MovementSpeed * (Time.deltaTime);
+            if (timeInState < Time.deltaTime)
+                translation = Direction * MovementSpeed * (timeInState);
+            
+
+            Rigidbody rbdy = GetComponent<Rigidbody>();
+
+            // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
+            rbdy.MovePosition(transform.position + translation);
+            //transform.position += (translation); 
+
+            m_lastUsedPacket = currentPackage;
+            
+        }
+    }
+
+    /// <summary>
+    /// Clientside prediction algorithm for players NOT possessing this object
+    /// </summary>
+    void Update_ClientSync() {
+        
+        // 
+    }
+
+
+    /// <summary>
+    /// Owner calculation algorithm , for Servercontroller object to stream to clients
+    /// </summary>
+    void Update_ServerCompute() {
 
         // debug: follow the mouse
-        Ray screenray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Vector3 endpos = screenray.origin + screenray.direction * 10.0f;
+        //Ray screenray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //Vector3 endpos = screenray.origin + screenray.direction * 10.0f;
 
-        transform.position = endpos;
+        //transform.position = endpos;
+
+        // raycast to see how far my 
+        Direction.y = 0;
+        Direction.Normalize();
+
+        Vector3 translation = Direction * MovementSpeed * Time.deltaTime;
+
+        Rigidbody rbdy = GetComponent<Rigidbody>();
+
+        // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
+        rbdy.MovePosition(transform.position + translation);
+        //transform.position += (translation); 
 
     }
+    #endregion
+
+    void DrawPackageInfo(Projectile2DState pack, Color col) {
+
+        Debug.DrawLine(pack.Position3() + Vector3.up, pack.Position3() + pack.Direction3() + Vector3.up , col, 1);
+    }
+    /// <summary>
+    /// Owner side collision detection, fixes ball offset
+    /// </summary>
+    /// <param name="collision"></param>
+    void OnCollisionEnter(Collision collision)
+    {
+        if (photonView.isMine || true)
+        {
+            // invert direction on collision
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                Debug.DrawRay(contact.point, contact.normal, Color.red, 5);
+                Vector3 N = contact.normal;
+
+
+                N.Normalize();
+
+
+                Vector3 D = Direction;
+
+                Vector3 R = Reflect(D, N);
+
+                // make sure I remove Y
+                R.y = 0;
+                R.Normalize();
+
+                
+                Direction = R;
+
+                // calc Overshoot and adjust ball position accordingly
+                float collisionSphereRadius = 1.5f/2f; // WARNING: using collisionsphere size set in Collision method
+                float overshoot = collisionSphereRadius - (contact.point - transform.position).magnitude;
+
+                // put balla long further on its path ( distance of overshoot )
+                Rigidbody rbdy = GetComponent<Rigidbody>();
+                rbdy.MovePosition(transform.position + (Direction * overshoot) );
+
+                Debug.Log("COLLISION: Distance from collider to hitpoint: " + (contact.point - transform.position).magnitude);
+                Debug.Log("COLLISION: Overshoot fixed: " + overshoot);
+
+
+            }
+        }
+    }
+    Vector3 Reflect(Vector3 v, Vector3 n)
+    {
+        Vector3 r;
+        // reflect through normal
+        // https://asalga.wordpress.com/2012/09/23/understanding-vector-reflection-visually/
+        // tldr; R = 2(N \cdot L)N - L
+
+        r = (2 * (Vector3.Dot(n, v)) * n) - v;
+
+        // invert R because I now have a vector pointing towards the normal
+        r *= -1f;
+
+        return r;
+    }
+
 
     // Network Code
     //------------
@@ -92,6 +238,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         // SERVER SIDE , stream out projectile info
         if (PhotonNetwork.isMasterClient)
         {
+
             Projectile2DState newState = new Projectile2DState( PhotonNetwork.time, transform.position, Direction);
             if (stream.isWriting)
             {
@@ -128,7 +275,8 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         m_PacketBuffer.Add(packet);
     }
     /// <summary>
-    /// adds/inserts a packet to a list of packages using the gameTime variable for sorting purposes
+    /// adds/inserts a packet t
+    /// o a list of packages using the gameTime variable for sorting purposes
     /// </summary>
     /// <param name="packet"></param>
     void AddPacketToBufferSorted(Projectile2DState packet)
@@ -204,12 +352,13 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         if (sortFirst)
             SortPacketBuffer();
 
-        Projectile2DState returnObject = m_PacketBuffer[0];
+        Projectile2DState returnObject = m_PacketBuffer[0]; // set to first object
 
         // run down the buffer from OLDEST TO NEWEST, as soon as I hit a time that is BIGGEr I'm in bussiness
         for (int i = 0; i < m_PacketBuffer.Count; i++)
         {
-            if (m_PacketBuffer[i].stateTime < gameTime) // first instance hit!
+                
+            if (m_PacketBuffer[i].stateTime < gameTime) // as long as stored time < given time it's ok.
                 returnObject = m_PacketBuffer[i];
         }
         return returnObject;
@@ -238,6 +387,14 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
     }
 
+    Projectile2DState GetLastPackage() {
+        return m_PacketBuffer[m_PacketBuffer.Count - 1];
+    }
+
+    Projectile2DState GetFirstPackage()
+    {
+        return m_PacketBuffer[0];
+    }
 
     private double SimulationTime() {
 
@@ -263,6 +420,9 @@ public struct Projectile2DState {
 
     public double stateTime;
     public Vector2 Position;
-    public Vector2 Direction; 
+    public Vector2 Direction;
+
+    public Vector3 Position3() { return new Vector3(Position.x, 0, Position.y); }
+    public Vector3 Direction3() { return new Vector3(Direction.x, 0, Direction.y); }
 
 }
