@@ -24,7 +24,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
     private float TrueGameTime;
     public float ArticifialDelay = 0f;
-    
+    private Vector3 ServerRigidVel;
     private List<Projectile2DState> m_PacketBuffer;
 
 
@@ -84,6 +84,17 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
     }
 
+
+    /// <summary>
+    /// Moves the ball ( using physics )
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="dir"></param>
+    /// <param name="dTime"></param>
+    void DoMoveBall(Vector3 pos, Vector3 dir, float dTime) {
+
+    }
+
     /// <summary>
     /// Clientside prediction algorithm, for players posessing this object
     /// </summary>
@@ -97,31 +108,43 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
 
             // init variables
-
-            //Projectile2DState lastPackage = GetLastPackage();
             Projectile2DState currentPackage = GetPackageBefore( PhotonNetwork.time - ArticifialDelay);
+            Rigidbody rbdy = GetComponent<Rigidbody>();
+
+            //Debug.Log(currentPackage);
+
+            Vector3 currentProjPos = transform.position;
+            
 
             Vector3 serverPos = currentPackage.Position3();
             Vector3 serverDir = currentPackage.Direction3();
             double serverTime = currentPackage.stateTime;
 
-            // if this is the first cycle, we overwrite our local data, and simulate using that data.
-            
-            float timeInState = (float)(PhotonNetwork.time - ArticifialDelay - serverTime);
-            DrawPackageInfo(currentPackage, Color.magenta);
+            // if this is the first cycle, we overwrite our local data, and simulate using that data.            
+            float timeInState = (float)(PhotonNetwork.time - ArticifialDelay - serverTime); // currenttime-delay-packettime
+            //DrawPackageInfo(currentPackage, Color.magenta);
+
             // if I'm on a new package this update, put the ball in the spot it's supposed to be
-            if (m_lastUsedPacket.stateTime < serverTime)
+            
+            if (m_lastUsedPacket.stateTime.CompareTo( serverTime) == -1 ) //prev state vs current state
             {
                 Direction = serverDir; // override direction
+                
+                //rbdy.MovePosition(serverPos);
                 transform.position = serverPos; // override position
+                //rbdy.velocity = Vector3.zero;
             }
+            rbdy.velocity = Vector3.zero;
 
             Vector3 translation = Direction * MovementSpeed * (Time.deltaTime);
-            if (timeInState < Time.deltaTime)
-                translation = Direction * MovementSpeed * (timeInState);
             
+            if (timeInState < Time.deltaTime)
+                translation = Direction * MovementSpeed * (Time.deltaTime - timeInState);
+                
 
-            Rigidbody rbdy = GetComponent<Rigidbody>();
+
+            //Debug.DrawLine(transform.position + Vector3.up, transform.position + translation + Vector3.up, Color.cyan , 1f);
+
 
             // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
             rbdy.MovePosition(transform.position + translation);
@@ -159,13 +182,34 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         Vector3 translation = Direction * MovementSpeed * Time.deltaTime;
 
         Rigidbody rbdy = GetComponent<Rigidbody>();
-
+        rbdy.velocity = Vector3.zero;
         // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
         rbdy.MovePosition(transform.position + translation);
         //transform.position += (translation); 
 
     }
     #endregion
+
+    /// <summary>
+    /// Returns true if this projectile has received packages
+    /// </summary>
+    /// <returns></returns>
+    public bool HasPackages()
+    {
+        if (m_PacketBuffer == null)
+            return false;
+
+        return (m_PacketBuffer.Count > 0);
+    }
+
+    /// <summary>
+    /// Returns a list of all packages
+    /// </summary>
+    /// <returns></returns>
+    public List<Projectile2DState> GetAllPackages() {
+        return m_PacketBuffer;
+    }
+
 
     void DrawPackageInfo(Projectile2DState pack, Color col) {
 
@@ -206,7 +250,9 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
                 // put balla long further on its path ( distance of overshoot )
                 Rigidbody rbdy = GetComponent<Rigidbody>();
-                rbdy.MovePosition(transform.position + (Direction * overshoot) );
+
+                //rbdy.MovePosition(transform.position + (Direction * overshoot) );
+                transform.position = transform.position + (Direction * overshoot);
 
                 Debug.Log("COLLISION: Distance from collider to hitpoint: " + (contact.point - transform.position).magnitude);
                 Debug.Log("COLLISION: Overshoot fixed: " + overshoot);
@@ -242,10 +288,11 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             Projectile2DState newState = new Projectile2DState( PhotonNetwork.time, transform.position, Direction);
             if (stream.isWriting)
             {
-
+                Rigidbody rbdy = GetComponent<Rigidbody>();
                 stream.SendNext(newState.stateTime);
                 stream.SendNext(newState.Position);
                 stream.SendNext(newState.Direction);
+
             }
         }
         // CLIENT SIDE
@@ -261,7 +308,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
                 AddPacketToBuffer(receivedState);
                 SortPacketBuffer();
-                //CleanPacketBuffer(receivedState.stateTime - 10f); // remove old packets if possible
+                CleanPacketBuffer( PhotonNetwork.time - .5f); // remove old packets if possible
             }
         }
     }
@@ -405,17 +452,19 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 }
 
 public struct Projectile2DState {
-    public Projectile2DState(double time, Vector2 pos, Vector2 dir) {
+
+    public Projectile2DState(double time, Vector2 pos, Vector2 dir ) {
         stateTime = time;
         Position = pos;
         Direction = dir;
     }
 
-    public Projectile2DState(double time, Vector3 pos, Vector3 dir)
+    public Projectile2DState(double time, Vector3 pos, Vector3 dir )
     {
         stateTime = time;
         Position = new Vector2( pos.x, pos.z );
         Direction = new Vector2(dir.x, dir.z);
+
     }
 
     public double stateTime;
@@ -424,5 +473,9 @@ public struct Projectile2DState {
 
     public Vector3 Position3() { return new Vector3(Position.x, 0, Position.y); }
     public Vector3 Direction3() { return new Vector3(Direction.x, 0, Direction.y); }
+
+    public override string ToString() {
+        return "Projectile2DState: position " + Position + " ,direction " + Direction + " ,statetime " + stateTime;
+    }
 
 }
