@@ -75,7 +75,8 @@ public class NetworkManager : MonoBehaviour {
     }
     void OnJoinedRoom()
     {
-
+        PhotonNetwork.sendRate = 25;
+        PhotonNetwork.sendRateOnSerialize = 20;
 
         // debiug:
         // spawn death ball if 1 player enters

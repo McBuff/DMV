@@ -15,6 +15,9 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     public Vector3 Direction;
     public float MovementSpeed;
 
+
+    public Vector3 previousPosition;
+
     private Projectile2DState m_lastUsedPacket;
     private float m_PacketTime;
     private float m_gameTimeOfLastPacketAssign;
@@ -105,13 +108,13 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
         if (m_PacketBuffer.Count > 0)
         {
-
+            
 
             // init variables
             Projectile2DState currentPackage = GetPackageBefore( PhotonNetwork.time - ArticifialDelay);
             Rigidbody rbdy = GetComponent<Rigidbody>();
 
-            //Debug.Log(currentPackage);
+            // draw some debugInfo
 
             Vector3 currentProjPos = transform.position;
             
@@ -130,26 +133,27 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             {
                 Direction = serverDir; // override direction
                 
-                //rbdy.MovePosition(serverPos);
+                rbdy.MovePosition(serverPos);
                 transform.position = serverPos; // override position
-                //rbdy.velocity = Vector3.zero;
+              //rbdy.velocity = Vector3.zero;
             }
+
+            
             rbdy.velocity = Vector3.zero;
 
             Vector3 translation = Direction * MovementSpeed * (Time.deltaTime);
             
-            if (timeInState < Time.deltaTime)
+            if (timeInState.CompareTo( Time.deltaTime ) == -1 )
                 translation = Direction * MovementSpeed * (Time.deltaTime - timeInState);
-                
 
-
-            //Debug.DrawLine(transform.position + Vector3.up, transform.position + translation + Vector3.up, Color.cyan , 1f);
-
+            Debug.Log("Clientside-Predict translation attempt: " + translation.magnitude);
+            if( translation.magnitude > 1.7f)
+                Debug.LogError("Clientside-Predict translation attempt: " + translation.magnitude);
 
             // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
             rbdy.MovePosition(transform.position + translation);
             //transform.position += (translation); 
-
+            previousPosition = transform.position + translation ;
             m_lastUsedPacket = currentPackage;
             
         }
@@ -226,9 +230,8 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             // invert direction on collision
             foreach (ContactPoint contact in collision.contacts)
             {
-                Debug.DrawRay(contact.point, contact.normal, Color.red, 5);
+                Debug.DrawRay(contact.point + Vector3.up, contact.normal, Color.red, 5);
                 Vector3 N = contact.normal;
-
 
                 N.Normalize();
 
@@ -250,12 +253,10 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
                 // put balla long further on its path ( distance of overshoot )
                 Rigidbody rbdy = GetComponent<Rigidbody>();
+                rbdy.velocity = Vector3.zero;
+                rbdy.MovePosition(transform.position + (Direction * overshoot) );
+                //transform.position = transform.position + (Direction * overshoot);
 
-                //rbdy.MovePosition(transform.position + (Direction * overshoot) );
-                transform.position = transform.position + (Direction * overshoot);
-
-                Debug.Log("COLLISION: Distance from collider to hitpoint: " + (contact.point - transform.position).magnitude);
-                Debug.Log("COLLISION: Overshoot fixed: " + overshoot);
 
 
             }
@@ -288,6 +289,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             Projectile2DState newState = new Projectile2DState( PhotonNetwork.time, transform.position, Direction);
             if (stream.isWriting)
             {
+                //Debug.LogWarning("Reading writing @" + PhotonNetwork.time);
                 Rigidbody rbdy = GetComponent<Rigidbody>();
                 stream.SendNext(newState.stateTime);
                 stream.SendNext(newState.Position);
@@ -300,6 +302,10 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         {
             if (stream.isReading)
             {
+                
+                //Debug.Log();
+
+                //Debug.Log("Reading reading @" + PhotonNetwork.time);
                 // receive packets and add them to the list of packets, ( then sort )
                 Projectile2DState receivedState = new Projectile2DState();
                 receivedState.stateTime = (double)stream.ReceiveNext();
@@ -308,7 +314,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
                 AddPacketToBuffer(receivedState);
                 SortPacketBuffer();
-                CleanPacketBuffer( PhotonNetwork.time - .5f); // remove old packets if possible
+                CleanPacketBuffer( PhotonNetwork.time - 1f); // remove old packets if possible
             }
         }
     }
@@ -321,6 +327,8 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     {
         m_PacketBuffer.Add(packet);
     }
+
+
     /// <summary>
     /// adds/inserts a packet t
     /// o a list of packages using the gameTime variable for sorting purposes
@@ -351,6 +359,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
          
     }
 
+
     /// <summary>
     /// Sorts the packet buffer from oldest to newest
     /// </summary>
@@ -359,6 +368,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         m_PacketBuffer.Sort(
             delegate( Projectile2DState p1, Projectile2DState p2)
             {
+                int returnVal = p1.stateTime.CompareTo(p2.stateTime);
                 return p1.stateTime.CompareTo(p2.stateTime);
             }
             );
@@ -428,7 +438,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
         if (removeRangeEnd != -1)
         {
-            Debug.Log("CleanPacketBuffer: Removing packets until index: " + removeRangeEnd + " of " + m_PacketBuffer.Count);
+            //Debug.Log("CleanPacketBuffer: Removing packets until index: " + removeRangeEnd + " of " + m_PacketBuffer.Count);
             m_PacketBuffer.RemoveRange(0, removeRangeEnd);
         }
 
