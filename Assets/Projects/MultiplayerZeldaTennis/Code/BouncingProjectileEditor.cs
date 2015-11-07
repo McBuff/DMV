@@ -31,14 +31,9 @@ public class BouncingProjectileEditor : Editor
 
         List<Projectile2DState> points = projectile.GetAllPackages();
 
-        DrawSegment(projectile.previousPosition + Vector3.up * .99f, projectile.transform.position + Vector3.up * .99f, Color.blue, visualizationTime);
-        Vector3 ballMoveDir = projectile.transform.position - projectile.previousPosition;
+        DrawSegment(projectile.transform.position + Vector3.up * .99f, projectile.nextPosition + Vector3.up * .99f, Color.blue, visualizationTime);
 
-        DrawArrow(projectile.transform.position + Vector3.up * (.99f - (projectile.previousPosition - projectile.transform.position).magnitude * .1f) ,
-            ballMoveDir,
-            (projectile.previousPosition - projectile.transform.position).magnitude,
-            Color.cyan, 
-            visualizationTime);
+        Vector3 ballMoveDir = projectile.transform.position - projectile.previousPosition;
 
         for (int i = 0; i < points.Count; i++)
         {

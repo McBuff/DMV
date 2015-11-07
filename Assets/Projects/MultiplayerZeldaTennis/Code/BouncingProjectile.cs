@@ -17,6 +17,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
 
     public Vector3 previousPosition;
+    public Vector3 nextPosition;
 
     private Projectile2DState m_lastUsedPacket;
     private float m_PacketTime;
@@ -108,52 +109,57 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
         if (m_PacketBuffer.Count > 0)
         {
-            
-
-            // init variables
+                // init variables
             Projectile2DState currentPackage = GetPackageBefore( PhotonNetwork.time - ArticifialDelay);
+
             Rigidbody rbdy = GetComponent<Rigidbody>();
 
-            // draw some debugInfo
-
-            Vector3 currentProjPos = transform.position;
-            
-
+            Vector3 clientPos = transform.position; 
             Vector3 serverPos = currentPackage.Position3();
+
+            Vector3 clientDir = Direction;
             Vector3 serverDir = currentPackage.Direction3();
+
+            
+            double clientTime = PhotonNetwork.time - ArticifialDelay;
             double serverTime = currentPackage.stateTime;
 
-            // if this is the first cycle, we overwrite our local data, and simulate using that data.            
-            float timeInState = (float)(PhotonNetwork.time - ArticifialDelay - serverTime); // currenttime-delay-packettime
-            //DrawPackageInfo(currentPackage, Color.magenta);
+            rbdy.velocity = Vector3.zero; // override unity's ridigbody
 
-            // if I'm on a new package this update, put the ball in the spot it's supposed to be
+            Vector3 currentPos = clientPos;
+            float dTime = Time.deltaTime;
             
-            if (m_lastUsedPacket.stateTime.CompareTo( serverTime) == -1 ) //prev state vs current state
+
+            if(m_lastUsedPacket.stateTime.CompareTo( serverTime) == -1)
             {
-                Direction = serverDir; // override direction
-                
-                rbdy.MovePosition(serverPos);
-                transform.position = serverPos; // override position
-              //rbdy.velocity = Vector3.zero;
+                // new packet is used for the first time
+                float packAge =(float)( clientTime - serverTime);
+
+
+                // if collision is imminent, .. don't overwrite?
+                // imminent = within packAge
+                RaycastHit[] hitinfo = Physics.SphereCastAll(serverPos, .75f, serverDir, packAge * MovementSpeed, LayerMask.GetMask("WorldCollision") );
+
+                if (hitinfo.Length != 0) {
+                    
+                    // this means a hit would have happened between ServerTime and Now ,
+                    // todo: predict clientpos further, or leave it like this
+                    Debug.LogWarning("predicted a hit");
+                }
+                else currentPos = CalculateProjectilePos(serverPos, serverDir, MovementSpeed, packAge);
+
+                //dTime = (float)(clientTime - serverTime); // <--- THIS IS WRONG!, this is the time to the current frame!
+                // calculate where the projecitle SHOULD BE!
             }
 
-            
-            rbdy.velocity = Vector3.zero;
-
-            Vector3 translation = Direction * MovementSpeed * (Time.deltaTime);
-            
-            if (timeInState.CompareTo( Time.deltaTime ) == -1 )
-                translation = Direction * MovementSpeed * (Time.deltaTime - timeInState);
-
-            Debug.Log("Clientside-Predict translation attempt: " + translation.magnitude);
-            if( translation.magnitude > 1.7f)
-                Debug.LogError("Clientside-Predict translation attempt: " + translation.magnitude);
+            // prediction code:
+            Vector3 nextBallPos = CalculateProjectilePos(currentPos, Direction, MovementSpeed, dTime);
 
             // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
-            rbdy.MovePosition(transform.position + translation);
-            //transform.position += (translation); 
-            previousPosition = transform.position + translation ;
+            rbdy.MovePosition(nextBallPos);
+
+            nextPosition = nextBallPos;
+            previousPosition = currentPos;
             m_lastUsedPacket = currentPackage;
             
         }
@@ -187,8 +193,10 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
         Rigidbody rbdy = GetComponent<Rigidbody>();
         rbdy.velocity = Vector3.zero;
+
         // Using rigidbody;'s move, I get physix calculations for everything I do, so this is prefered
-        rbdy.MovePosition(transform.position + translation);
+        Vector3 targetPos = CalculateProjectilePos(transform.position, Direction, MovementSpeed, Time.deltaTime);
+        rbdy.MovePosition(targetPos);
         //transform.position += (translation); 
 
     }
@@ -205,6 +213,23 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
         return (m_PacketBuffer.Count > 0);
     }
+
+
+    /// <summary>
+    /// Calculates ball endpos with given parameters. Used by Server and Client alike
+    /// </summary>
+    /// <param name="startPos"></param>
+    /// <param name="direction"></param>
+    /// <param name="speed"></param>
+    /// <param name="dTime"></param>
+    /// <returns></returns>
+    public Vector3 CalculateProjectilePos(Vector3 startPos, Vector3 direction, float speed, float dTime) {
+
+        Vector3 endPos = startPos + direction * speed * dTime;
+        return endPos;
+
+    }
+
 
     /// <summary>
     /// Returns a list of all packages
