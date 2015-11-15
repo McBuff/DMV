@@ -34,4 +34,5 @@ MonoBehaviour:
   - RequestForPickupTimes
   - SetPlayerState
   - ChangeBallTrajectory
+  - SetGameplayState
   DisableAutoOpenWizard: 1

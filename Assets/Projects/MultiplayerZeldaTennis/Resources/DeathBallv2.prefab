@@ -703,6 +703,7 @@ MonoBehaviour:
   Direction: {x: 1, y: 0, z: 1}
   MovementSpeed: 50
   previousPosition: {x: 0, y: 0, z: 0}
+  nextPosition: {x: 0, y: 0, z: 0}
   ArticifialDelay: 0
 --- !u!114 &11498212
 MonoBehaviour:

@@ -13,6 +13,7 @@ GameObject:
   - 114: {fileID: 11426694}
   - 114: {fileID: 11402180}
   - 54: {fileID: 5499322}
+  - 114: {fileID: 11463908}
   m_Layer: 9
   m_Name: PlayerV2
   m_TagString: Untagged
@@ -534,6 +535,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfe2bbd000df3be4084a0438962f7eef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11463908
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 101762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42410a3a9571bba4096f663860b8baea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MovementSpeed: 10
 --- !u!114 &11477354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -607,6 +620,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_IsKinematic
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: MovementSpeed
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

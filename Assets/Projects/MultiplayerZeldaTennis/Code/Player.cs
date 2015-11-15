@@ -8,6 +8,7 @@ public class Player : Photon.MonoBehaviour
 
     public Rigidbody rigidbody;
     public Player_Weapon m_Weapon;
+    private Player_Movement m_PlayerMover;
 
     // State Machine related:
     //-----------------------
@@ -58,6 +59,8 @@ public class Player : Photon.MonoBehaviour
         m_NetworkPackagesList = new ArrayList();
         rigidbody = GetComponent<Rigidbody>();
 
+        m_PlayerMover = GetComponent<Player_Movement>();
+
         m_CurrentState = PlayerState.movement;
         m_CurrentStateStartTime = 0;
     }
@@ -79,7 +82,7 @@ public class Player : Photon.MonoBehaviour
             switch (m_CurrentState)
             {
                 case PlayerState.movement:
-                    InputMovement();
+                    //InputMovement();
                     InputLookat();
 
                     if (Attack_Primary_Down())
