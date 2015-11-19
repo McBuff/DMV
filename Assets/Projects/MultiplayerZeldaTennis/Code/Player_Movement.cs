@@ -17,7 +17,7 @@ public class Player_Movement : Photon.MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if( networkView.isMine)
+        if( photonView.isMine)
         {
             Vector3 inputDirection;
             inputDirection = GetInputDirection(ControllerType.Keyboard);
