@@ -4,6 +4,8 @@ using System.Collections;
 public class Player : Photon.MonoBehaviour
 {
 
+    public PhotonPlayer Photonplayer;
+
     public float speed = 5f;
 
     public Rigidbody rigidbody;

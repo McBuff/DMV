@@ -35,4 +35,6 @@ MonoBehaviour:
   - SetPlayerState
   - ChangeBallTrajectory
   - SetGameplayState
+  - SetPlayerID
+  - AddPlayerToPlayerManager
   DisableAutoOpenWizard: 1

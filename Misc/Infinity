@@ -1,0 +1,9 @@
+#Infinity
+
+public class iPixel(){
+
+public void Contract( Pixel px )
+
+public void Enhance(){}
+
+};

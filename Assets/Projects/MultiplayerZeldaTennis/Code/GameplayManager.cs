@@ -31,8 +31,6 @@ public class GameplayManager : Photon.MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
-        
-
         // if I'm the server, regulate gameplay events. 
         if (PhotonNetwork.isMasterClient ) {
 
