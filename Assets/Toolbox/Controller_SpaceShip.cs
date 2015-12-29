@@ -19,7 +19,7 @@ public class Controller_SpaceShip : MonoBehaviour {
 
         float xForce =0, yForce=0, zForce = 0;
         float rotationForce = 0.08f * Time.deltaTime;
-        float angularDecayRate = 0.99f;
+        //float angularDecayRate = 0.99f;
         bool buttonpressed = false;
 
         Quaternion addedAngular = new Quaternion();
@@ -59,6 +59,8 @@ public class Controller_SpaceShip : MonoBehaviour {
             xForce = -rotationForce;
             buttonpressed = true;
         }
+        if (buttonpressed)
+            buttonpressed = !!buttonpressed;
 
         addedAngular.Set(xForce, yForce, zForce, 1);
         //AngularVelocity *= addedAngular; // add angular velocity using added force 

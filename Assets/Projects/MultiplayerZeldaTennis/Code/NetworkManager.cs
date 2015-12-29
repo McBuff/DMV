@@ -92,6 +92,7 @@ public class NetworkManager : MonoBehaviour {
         if (PhotonNetwork.masterClient == PhotonNetwork.player)
         {
             PhotonNetwork.player.name = "ServerPlayer";
+            PlayerManager.GetInstance().AddPlayerToPlayerManager(PhotonNetwork.player.ID, 0);
             EventLog.GetInstance().LogMessage("Created room! You are the host!");
         }
         else
@@ -104,17 +105,6 @@ public class NetworkManager : MonoBehaviour {
         // Go Into Spectating mode untill further orders have been received from the server
         // Set Lobby Cam as main camera
         
-        //DELETE THIS LATER add SELF to scoreboard
-        ScoreBoard.GetInstance().AssignPlayerToSlot(PhotonNetwork.player, 0);
-
-        // CLIENT:
-        PhotonPlayer[] playerList = PhotonNetwork.playerList;
-        for (int i = 0; i < playerList.Length; ++i) {
-            PhotonPlayer listplayer = playerList[i];
-
-            if (listplayer.isLocal)
-                PlayerID = i;
-        }
 
         // spawn death ball if 1 player enters
         if (PhotonNetwork.playerList.Length > 0 && PhotonNetwork.isMasterClient)
@@ -126,8 +116,11 @@ public class NetworkManager : MonoBehaviour {
                 */
         }
         
-        // spawn player at the end of list
-        //SpawnPlayer(PhotonNetwork.playerList.Length -1);
+    }
+
+    void OnCreatedRoom()
+    {
+        
     }
 
     /// <summary>
@@ -137,17 +130,41 @@ public class NetworkManager : MonoBehaviour {
     void OnPhotonPlayerConnected(PhotonPlayer player)
     {
         EventLog.GetInstance().LogMessage("<b>" + player.name + "</b> entered the game.");
-        PlayerManager.GetInstance().AddPlayerToPlayerManager(player.ID, 1);
+        //PlayerManager.GetInstance().AddPlayerToPlayerManager(player.ID, 1);
         // Call all players to put players into an available player slot
         if( PhotonNetwork.isMasterClient)
-        {
-            // Send a full set of game info to the newly connected player
-            // set Server pos 0
-            PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", player, new object[] { PhotonNetwork.player.ID, 0 });
-
+        {            
             // set rest pos 1-2-3
-            PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", player, new object[] { player.ID, 1 });
+            PhotonPlayer player_0 = PlayerManager.GetInstance().GetPlayerInSlot(0);
+            PhotonPlayer player_1 = PlayerManager.GetInstance().GetPlayerInSlot(1);
+            PhotonPlayer player_2 = PlayerManager.GetInstance().GetPlayerInSlot(2);
+            PhotonPlayer player_3 = PlayerManager.GetInstance().GetPlayerInSlot(3);
+
+            Debug.Log("A player has joined, current player slots are: " + player_0 + ", " + player_1 + ", " + player_2 + ", " + player_3);
+
+            if (player_0 != null)
+                PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", player, new object[] { player_0.ID, 0 });
+            if ( player_1 != null)
+                PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", player, new object[] { player_1.ID, 1 });
+            if (player_2 != null)
+                PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", player, new object[] { player_2.ID, 2 });
+            if (player_3 != null)
+                PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", player, new object[] { player_3.ID, 3 });
+
+
+            // Put new player in an open slot , and inform ALL clients ( including the new one )
+            //-------------------
+
+            int openSlotID = PlayerManager.GetInstance().GetOpenPlayerSlot();
+            if (openSlotID == -1)
+                Debug.LogError("Server could not find a player slot to assign player to... what now?");
+
+            Debug.Log("Assigning new player to slot: " + openSlotID);
+            PlayerManager.GetInstance().GetComponent<PhotonView>().RPC("AddPlayerToPlayerManager", PhotonTargets.All, new object[] { player.ID, openSlotID });
+
         }
+
+
     }
 
 
@@ -161,7 +178,7 @@ public class NetworkManager : MonoBehaviour {
 
 
         // Clean up player info
-        PlayerManager.GetInstance().RemovePlayerFromPlayerManager(player.ID);
+        PlayerManager.GetInstance().RemovePlayerFromPlayerManager(player);
         
 
     }
@@ -169,6 +186,7 @@ public class NetworkManager : MonoBehaviour {
     /// <summary>
     /// Spawn player at A spawn point
     /// </summary>
+    [System.Obsolete]
     void SpawnPlayer(int playerID) {
 
         // Spawn player

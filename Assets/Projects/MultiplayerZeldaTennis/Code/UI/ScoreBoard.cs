@@ -17,9 +17,6 @@ public class ScoreBoard : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         
-            // my child needs to show
-        Transform child = this.transform.GetChild(0);
-
         // I've tried disabling the scoreboard, but this causes glitchy behaviour when assigning players to a slot
         // Therefore, I just offset the scoreboard Out of the screen
         

@@ -4,26 +4,20 @@ using System.Collections;
 public class Player : Photon.MonoBehaviour
 {
 
+    // Network player, used to identity the player owning this object
     public PhotonPlayer Photonplayer;
 
+    [System.Obsolete]
     public float speed = 5f;
 
-    public Rigidbody rigidbody;
+    new public Rigidbody rigidbody;
     public Player_Weapon m_Weapon;
-    private Player_Movement m_PlayerMover;
 
     // State Machine related:
     //-----------------------
     private PlayerState m_CurrentState;
     private float m_CurrentStateStartTime;
 
-    // State synchronisation
-    //-----------------------
-    private float lastSynchronizationTime = 0f;
-    private float syncDelay = 0f;
-    private float syncTime = 0f;
-    private Vector3 syncStartPosition = Vector3.zero;
-    private Vector3 syncEndPosition = Vector3.zero;
 
     public bool isSurpressed = false;
     
@@ -60,12 +54,27 @@ public class Player : Photon.MonoBehaviour
     {
         m_NetworkPackagesList = new ArrayList();
         rigidbody = GetComponent<Rigidbody>();
-
-        m_PlayerMover = GetComponent<Player_Movement>();
+        Direction = Vector3.zero;
 
         m_CurrentState = PlayerState.movement;
         m_CurrentStateStartTime = 0;
+
+       
     }
+
+    void OnPhotonInstantiate(PhotonMessageInfo info)
+    {
+        // I need to figure out who owns me, and update that knowledge in PlayerManager
+        PhotonPlayer sender = info.sender;
+        Photonplayer = sender;
+        PlayerManager.GetInstance().AssignPlayerObjectToPlayer(this, sender);
+        
+        //DEBUG:      
+        // Set color of object to Slot Color
+        int photonPlayerSlot = PlayerManager.GetInstance().GetPlayerSlot(sender);
+        GetComponentInChildren<Renderer>().material.color = PlayerManager.GetInstance().GetPlayerSlotColor(photonPlayerSlot);
+    }
+
     void Update()
     {
         m_Lifetime += Time.deltaTime;
@@ -84,7 +93,7 @@ public class Player : Photon.MonoBehaviour
             switch (m_CurrentState)
             {
                 case PlayerState.movement:
-                    //InputMovement();
+                    
                     InputLookat();
 
                     if (Attack_Primary_Down())
@@ -126,7 +135,8 @@ public class Player : Photon.MonoBehaviour
         {
             if (m_NetworkPackagesList.Count >= 2)
             {
-                SynchedMovement();
+
+                //SynchedMovement();
                 SynchedLookat();
             }
 
@@ -134,54 +144,18 @@ public class Player : Photon.MonoBehaviour
     }
 
     /// <summary>
-    /// Handle movement using local inputs
-    /// </summary>
-    void InputMovement()
-    {
-        Vector3 newmovement = new Vector3();
-        Vector3 MaxMovement = new Vector3();
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            newmovement += CalcMaxMoveDistanceInDirection(Vector3.forward);
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            newmovement += CalcMaxMoveDistanceInDirection(Vector3.back);            
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-
-            newmovement += CalcMaxMoveDistanceInDirection(Vector3.right);
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            newmovement += CalcMaxMoveDistanceInDirection(Vector3.left);
-        }
-
-
-
-        Direction = newmovement;
-
-        transform.position = transform.position + newmovement * speed * Time.deltaTime;
-        //rigidbody.MovePosition(rigidbody.position + newmovement * speed * Time.deltaTime);
-    }
-
-    /// <summary>
     /// Handle movement using network data
     /// </summary>
-    void SynchedMovement()
+    [System.Obsolete]
+    private void SynchedMovement()
     {
         // set up vars
         Vector3 PosX = ((networkData)m_NetworkPackagesList[0]).P;
-        Vector3 VelX = ((networkData)m_NetworkPackagesList[0]).V;
+        //Vector3 VelX = ((networkData)m_NetworkPackagesList[0]).V;
         float LifetimeX = ((networkData)m_NetworkPackagesList[0]).Lifetime;
 
         Vector3 PosY = ((networkData)m_NetworkPackagesList[1]).P;
-        Vector3 VelY = ((networkData)m_NetworkPackagesList[1]).V;
+        //Vector3 VelY = ((networkData)m_NetworkPackagesList[1]).V;
         float LifetimeY = ((networkData)m_NetworkPackagesList[1]).Lifetime;
 
         // magic
@@ -193,40 +167,11 @@ public class Player : Photon.MonoBehaviour
         
         Vector3 newPos = Vector3.Lerp(PosX, PosY, syncLife/ syncTimeSpan);
 
-        // the player's direction has altered
-        //if (VelX != VelY)
-        //{
-            
-        //    Vector3 estimatedTurnPoint =  Toolbox.VectorTools.IntersectionPoint(PosX, VelX, PosY, VelY);
-
-        //    // Draw angle of estimated turnpoint
-        //    Debug.DrawLine(PosX, estimatedTurnPoint, Color.red, 4f);
-        //    Debug.DrawLine(estimatedTurnPoint, PosY, Color.cyan, 4f);
-
-        //    float distanceToTurnpoint = (estimatedTurnPoint - PosX).magnitude;
-
-        //    float lifeTimeAtHit = distanceToTurnpoint / (speed);
-
-        //    // if not yet turned in locla time, proceed as planned
-        //    if (syncLife < lifeTimeAtHit)
-        //    {
-                
-        //        // don't really do anything
-        //        newPos = EstimatePositionLinear(PosX, VelX, syncLife); 
-        //    }
-        //    else // the turnpoint has been passed
-        //    {
-        //        // calculate pos from turnpoint to current                
-        //        newPos = EstimatePositionLinear(estimatedTurnPoint, VelY, syncLife - lifeTimeAtHit);
-        //    }
-
-        //}
-        
-
         // apply LOCAL
         transform.position = newPos;
     }
 
+    [System.Obsolete]
     void InputLookat() {
         // handlemouselook
         Ray screenToWorldRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -237,6 +182,7 @@ public class Player : Photon.MonoBehaviour
         
     }
 
+    [System.Obsolete]
     void SynchedLookat() {
 
         // Lerp between beginrot and endrot
@@ -269,6 +215,7 @@ public class Player : Photon.MonoBehaviour
     /// <param name="direction"></param>
     /// <param name="dTime"></param>
     /// <returns></returns>
+    [System.Obsolete]
     Vector3 EstimatePositionLinear( Vector3 startpos, Vector3 direction, float dTime) {
         // init
         Vector3 estimatedPos = Vector3.zero;
@@ -279,6 +226,7 @@ public class Player : Photon.MonoBehaviour
         return estimatedPos;
     }
 
+    [System.Obsolete]
     Vector3 CalcMaxMoveDistanceInDirection(Vector3 direction) {
         Vector3 adjusteddirection = Vector3.zero;
         float minDistanceToMove = .5f;
@@ -340,8 +288,6 @@ public class Player : Photon.MonoBehaviour
         }
 
     }
-
-
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

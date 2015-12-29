@@ -117,7 +117,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             Vector3 clientPos = transform.position; 
             Vector3 serverPos = currentPackage.Position3();
 
-            Vector3 clientDir = Direction;
+            //Vector3 clientDir = Direction;
             Vector3 serverDir = currentPackage.Direction3();
 
             
@@ -189,7 +189,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         Direction.y = 0;
         Direction.Normalize();
 
-        Vector3 translation = Direction * MovementSpeed * Time.deltaTime;
+        //Vector3 translation = Direction * MovementSpeed * Time.deltaTime;
 
         Rigidbody rbdy = GetComponent<Rigidbody>();
         rbdy.velocity = Vector3.zero;
@@ -315,7 +315,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             if (stream.isWriting)
             {
                 //Debug.LogWarning("Reading writing @" + PhotonNetwork.time);
-                Rigidbody rbdy = GetComponent<Rigidbody>();
+                //Rigidbody rbdy = GetComponent<Rigidbody>();
                 stream.SendNext(newState.stateTime);
                 stream.SendNext(newState.Position);
                 stream.SendNext(newState.Direction);
@@ -393,7 +393,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
         m_PacketBuffer.Sort(
             delegate( Projectile2DState p1, Projectile2DState p2)
             {
-                int returnVal = p1.stateTime.CompareTo(p2.stateTime);
+                //int returnVal = p1.stateTime.CompareTo(p2.stateTime);
                 return p1.stateTime.CompareTo(p2.stateTime);
             }
             );

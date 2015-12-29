@@ -48,7 +48,7 @@ public class Camera_FirstPerson : MonoBehaviour {
 
         
         Quaternion targetRotation = new Quaternion(mouseOffset.x * Time.deltaTime, mouseOffset.y *Time.deltaTime, mouseOffset.z, 1);
-        Quaternion currentRotation = transform.rotation;
+        //Quaternion currentRotation = transform.rotation;
         // what if transformations were lerped?
 
 

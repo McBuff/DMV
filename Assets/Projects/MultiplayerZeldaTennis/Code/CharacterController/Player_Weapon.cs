@@ -3,11 +3,11 @@ using System.Collections;
 
 public class Player_Weapon : MonoBehaviour {
 
-    private float Angle = 90f;
+    
     private float Duration = .05f;
 
     private float startTime = 0;
-    private float startAngle = -45f;
+    
 
     private float m_PlayerAttackDirection;
 	// Use this for initialization

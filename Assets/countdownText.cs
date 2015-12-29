@@ -18,7 +18,6 @@ public class countdownText : MonoBehaviour {
         
         if (m_Timer != null)
         {
-            Debug.Log(m_Timer.GetTimeleft().ToString());
             m_Timer.updateTimer();
 
             if (m_Timer.isFinished)

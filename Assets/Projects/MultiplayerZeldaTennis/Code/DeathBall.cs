@@ -4,17 +4,16 @@ using System.Collections;
 
 public class DeathBall : Photon.MonoBehaviour {
 
-    public Rigidbody rigidbody;
+    new public Rigidbody rigidbody;
 
 
     // Movement
     public Vector3 Velocity;
     public float Speed = 10f;
 
-    private float SpeedIncreaseOnHit = .5f;
+    //private float SpeedIncreaseOnHit = .5f;
 
     // synching
-    private float syncTime = 0f;
     private float syncDelay;
     private float lastSyncTime;
     private Vector3 syncEndPosition;
@@ -26,7 +25,7 @@ public class DeathBall : Photon.MonoBehaviour {
     private float m_Lifetime = 0;
     // this value is used to calculate the lifetime of this object
 
-    private bool m_isInitialised = false;
+    
 
     private Vector3 Sync_ReceivedPos;
     private Vector3 Sync_ReceivedVelocity;
@@ -34,12 +33,12 @@ public class DeathBall : Photon.MonoBehaviour {
     private float Sync_LastSyncTime;
     
 
-    private float package_overtime = 0;
 
-    private float timeToNextSyncedData = 0;
 
-    private float serverSendrate = 0;
-    private float clientReceiveRate = 0;
+
+
+
+    
     public GameObject BounceEffectPrefab;
 
     // networkdata

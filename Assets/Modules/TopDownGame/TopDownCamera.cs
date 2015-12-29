@@ -24,13 +24,6 @@ public class TopDownCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.A) )
-        {
-            bool bol = true;
-
-        }
-
-
         // output debug info
         OutputDebugInfo();
     }

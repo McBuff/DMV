@@ -33,7 +33,7 @@ public class BouncingProjectileEditor : Editor
 
         DrawSegment(projectile.transform.position + Vector3.up * .99f, projectile.nextPosition + Vector3.up * .99f, Color.blue, visualizationTime);
 
-        Vector3 ballMoveDir = projectile.transform.position - projectile.previousPosition;
+        //Vector3 ballMoveDir = projectile.transform.position - projectile.previousPosition;
 
         for (int i = 0; i < points.Count; i++)
         {

@@ -90,7 +90,7 @@ public class Player_Movement : Photon.MonoBehaviour {
 
         float xComp = inputDirection.x;
         float zComp = inputDirection.z;
-        LayerMask rayCastMask = (1 << LayerMask.NameToLayer("WorldCollision"));
+        //LayerMask rayCastMask = (1 << LayerMask.NameToLayer("WorldCollision"));
 
         
 
@@ -115,7 +115,7 @@ public class Player_Movement : Photon.MonoBehaviour {
     {
 
         float closestWallDistance = 1000000;
-        Vector3 result = direction;
+        //Vector3 result = direction;
 
         LayerMask rayCastMask = (1 << LayerMask.NameToLayer("WorldCollision"));
 
@@ -132,46 +132,6 @@ public class Player_Movement : Photon.MonoBehaviour {
             }
         }
         return closestWallDistance;
-    }
-
-    [Obsolete("CalcMaxMoveDistanceInDirection is deprecated, Please Use GetmaxMovementDirection instead")]
-    Vector3 CalcMaxMoveDistanceInDirection(Vector3 direction)
-    {
-        Vector3 adjusteddirection = Vector3.zero;
-        float minDistanceToMove = .5f;
-        // let's see if I CAN actually go the direction 
-        //TODO: check colliision layers
-        LayerMask mask = (1 << LayerMask.NameToLayer("WorldCollision"));
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, direction, mask);
-        if (hits != null)
-        {
-
-            // if hits are registered ( and there should be )
-            float shortestdistance = 10000.0f; // ultimate value
-
-            foreach (RaycastHit hit in hits)
-            {
-                // see if hitpoint is closer than the previous by measuring a difference in distance
-                float hitdistance = (hit.point - transform.position).magnitude;
-
-                if (shortestdistance > hitdistance) // if this distance is closer than the last one
-                    shortestdistance = hitdistance;
-            }
-
-            // now adjust the movement depending on if a thresshold is reached
-            if (shortestdistance > minDistanceToMove)
-                adjusteddirection = direction.normalized;
-            else adjusteddirection = direction * shortestdistance * 0f;
-
-            // otherwise return zero vector
-            return adjusteddirection;
-
-            //newmovement += Vector3.forward;
-        }
-        else Debug.LogWarning("Wallcheck has detected no colliders, something is off!");
-
-
-        return adjusteddirection;
     }
 }
 

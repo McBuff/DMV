@@ -109,7 +109,7 @@ namespace Toolbox
 
         public void updateTimer()
         {
-            Debug.Log("updateTimer: " + m_endTime);
+            //Debug.Log("updateTimer: " + m_endTime);
             // check if timer has expired
             if(Time.time > m_endTime && isRunning)
             {

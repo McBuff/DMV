@@ -46,7 +46,7 @@ public class Controller_character_FPS_ZeroG : MonoBehaviour {
         mouseOffset = new Vector3(xSensitiviy * mouseOffset.x, ySensitiviy * mouseOffset.y, mouseOffset.z); // mouse sensitivy
         
         Quaternion targetRotation = new Quaternion(mouseOffset.x * Time.deltaTime, mouseOffset.y * Time.deltaTime, mouseOffset.z, 1);
-        Quaternion currentRotation = PlayerLowerBody.rotation;
+        //Quaternion currentRotation = PlayerLowerBody.rotation;
         PlayerCam.rotation *= targetRotation;
         PlayerCam.LookAt(PlayerCam.position + PlayerCam.forward, PlayerLowerBody.up); // force camera upright
 

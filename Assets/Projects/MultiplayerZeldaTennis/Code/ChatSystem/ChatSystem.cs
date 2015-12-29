@@ -33,7 +33,6 @@ public class ChatSystem : MonoBehaviour {
         isChatShowing = !isChatShowing;
         if (isChatShowing)
         {
-            CanvasRenderer canvasRender = GetComponent<CanvasRenderer>();
             
             // show chat windows and commands
             CanvasRenderer inputFieldCanvas = GetComponentInChildren<CanvasRenderer>();
