@@ -18,6 +18,9 @@ namespace DMV.GameplaystateManager
             // init... some... things???
 
             // make sure the level is clean maybe, I dunno
+
+            // Camera goes back to countdown
+
             base.Init();
         }
 

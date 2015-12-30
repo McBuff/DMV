@@ -76,6 +76,10 @@ public class PlayerManager : MonoBehaviour {
                 // Assign player to Scoreboard slot
                 ScoreBoard.GetInstance().AssignPlayerToSlot(photonPlayer, index);
 
+                // Log message to players
+                string coloredPlayerName = ColorUtility.ColorRichtText(m_SlotColorList[index], photonPlayer.name);
+                EventLog.GetInstance().LogMessage( "<b>" + coloredPlayerName + "</b> has connected!");
+
                 succes = true;
             }
         }
@@ -134,6 +138,21 @@ public class PlayerManager : MonoBehaviour {
         return -1;
     }
 
+    /// <summary>
+    /// Returns the playerobject owned by this client
+    /// </summary>
+    /// <returns></returns>
+    public Player GetLocalPlayerObject()
+    {
+        for (int i = 0; i < m_PlayerInfoList.Count; i++)
+        {
+            if (m_PlayerInfoList[i].PhotonPlayer == null)
+                continue;
+            if (m_PlayerInfoList[i].PhotonPlayer.isLocal)
+                return m_PlayerInfoList[i].PlayerObject;
+        }
+        return null;
+    }
 
     public Player GetPlayerObjectInSlot(int slotIndex)
     {
@@ -202,6 +221,8 @@ public class PlayerManager : MonoBehaviour {
 
         // Clear Player slot
         ScoreBoard.GetInstance().ClearPlayerFromSlot(leftPlayerInfo.SlotID);
+
+        // despawn player if not despawned already
 
         // Write message that a player has left
         Color slotColor = GetPlayerSlotColor(leftPlayerInfo.SlotID);

@@ -52,15 +52,14 @@ public class NetworkManager : MonoBehaviour {
                 {
                     //PhotonNetwork.player.name = "ClientPlayer";
                     if (GUI.Button(new Rect(100, 250 + (95 * i), 500, 90), "Join " + roomsList[i].name))
+                    {
+                        PhotonNetwork.player.name = "ClientPlayer " + Time.time;
                         PhotonNetwork.JoinRoom(roomsList[i].name);
+                    }
                 }
             }
         }
-        //if ( PhotonNetwork.player == PhotonNetwork.masterClient)
-        //{
-        //    GUILayout.Box("ClientType: Server");
-        //}
-        //else GUILayout.Box("ClientType: Client");
+
 
 
 
@@ -98,7 +97,7 @@ public class NetworkManager : MonoBehaviour {
         else
         {
             
-            PhotonNetwork.player.name = "ClientPlayer"; // NOTE: this is not the best place to rename the player. The Player's name should remain consistent throughout the joining of rooms
+            //PhotonNetwork.player.name = "ClientPlayer"; // NOTE: this is not the best place to rename the player. The Player's name should remain consistent throughout the joining of rooms
             EventLog.GetInstance().LogMessage("Joined room!");
         }
 
@@ -129,7 +128,7 @@ public class NetworkManager : MonoBehaviour {
     /// <param name="player"></param>
     void OnPhotonPlayerConnected(PhotonPlayer player)
     {
-        EventLog.GetInstance().LogMessage("<b>" + player.name + "</b> entered the game.");
+        
         //PlayerManager.GetInstance().AddPlayerToPlayerManager(player.ID, 1);
         // Call all players to put players into an available player slot
         if( PhotonNetwork.isMasterClient)
@@ -164,6 +163,8 @@ public class NetworkManager : MonoBehaviour {
 
         }
 
+        //EventLog.GetInstance().LogMessage("<b>" + player.name + "</b> entered the game.");
+
 
     }
 
@@ -181,44 +182,6 @@ public class NetworkManager : MonoBehaviour {
         PlayerManager.GetInstance().RemovePlayerFromPlayerManager(player);
         
 
-    }
-
-    /// <summary>
-    /// Spawn player at A spawn point
-    /// </summary>
-    [System.Obsolete]
-    void SpawnPlayer(int playerID) {
-
-        // Spawn player
-        Vector3 playerPosition = Vector3.zero;
-
-        // get a position from spawners
-        playerPosition = SpawnpointList.transform.GetChild(playerID).position;
-
-        GameObject newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.up * 1, Quaternion.identity, 0);
-        newPlayer.transform.position = playerPosition;
-        newPlayer.transform.SetParent(PlayerManager.GetInstance().transform );
-        newPlayer.name = PlayerName;
-        Color[] playerColors = new Color[4]{ Color.red, Color.green, Color.blue, Color.yellow };
-
-        newPlayer.GetComponentInChildren<Renderer>().material.color = playerColors[ playerID];
-
-
-        // CLIENT:
-        PhotonPlayer[] playerList = PhotonNetwork.playerList;
-        for (int i = 0; i < playerList.Length; ++i)
-        {
-            PhotonPlayer listplayer = playerList[i];
-
-            if (listplayer.isLocal)
-                PlayerID = i;
-        }
-
-
-        if ( playerID == 0)
-        {
-            Camera.main.GetComponent<Camera_Controller>().targetPlayer = newPlayer.transform;
-        }
     }
 }
 //public enum GameState {

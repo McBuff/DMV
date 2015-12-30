@@ -31,7 +31,14 @@ namespace DMV.GameplaystateManager
             
             PlayerManager.GetInstance().SpawnPlayers_All();
 
+            // Move Camera to Countdown position
+            CameraPresetData presetData = CameraManager.GetInstance().GetCameraPresetPosition("CameraPreset_Countdown");
+            CameraManager.GetInstance().LerpTo(presetData.CameraPos, presetData.CameraTarget);
 
+            
+
+            #region old code
+            /*
             // OLD CODE
 
             // Set all player positions to their respective spawn positions
@@ -48,7 +55,8 @@ namespace DMV.GameplaystateManager
             //    player.transform.position = spawnpoint.position;
             //    player_movement.enabled = false;
             //}
-
+            */
+            #endregion  
 
             base.Init();
         }

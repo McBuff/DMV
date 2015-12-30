@@ -55,4 +55,10 @@ public class ColorUtility : MonoBehaviour {
 
         return returnvalue;
     }
+
+    public static string ColorRichtText( UnityEngine.Color color, string text)
+    {
+        string colorvalue = ColorToHex(color);
+        return "<color=" + colorvalue + ">" + text + "</color>";
+    }
 }
