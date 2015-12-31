@@ -162,6 +162,54 @@ public class KeyframeList<T>
         Do_AutoSort();
     }
     
+    /// <summary>
+    /// Removes a given range of indices from the list
+    /// </summary>
+    /// <param name="index"></param>
+    /// <param name="count"></param>
+    public void RemoveRange(int index , int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            m_KeyframeList.RemoveAt(index + i);
+        }
+        Do_AutoSort();
+    }
+
+
+    public void RemoveAllBefore(double time)
+    {
+        if (Count == 0)
+            return;
+        // reverse through the array, deleting items
+        for (int i = m_KeyframeList.Count -1 ; i >= 0; i--)
+        {
+            if( time >  m_KeyframeList[i].KeyTime)
+            {
+                m_KeyframeList.RemoveAt(i);
+            }
+        }
+    }
+
+    public void RemoveAllAfter(double time)
+    {
+        if (Count == 0)
+            return;
+        // reverse through the array, deleting items
+        for (int i = m_KeyframeList.Count-1; i >= 0; i--)
+        {
+            if (time < m_KeyframeList[i].KeyTime)
+            {
+                m_KeyframeList.RemoveAt(i);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns index closest to, but before given time ( EXCLUDING exact matches ). Returns -1 if nothing could be found
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
     public int GetIndexFirstBefore(double time)
     {
         Do_AutoSort();
@@ -199,6 +247,12 @@ public class KeyframeList<T>
         }
         return closestID;
     }
+
+    /// <summary>
+    /// Returns index closest to, but AFter given time ( excluding exact matches ). Returns -1 if nothing could be found
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
     public int GetIndexFirstAfter(double time)
     {
         Do_AutoSort();
@@ -248,6 +302,8 @@ public class KeyframeList<T>
         return newRange;
         //return range;
     }
+
+    
 
     // Committing some sins here
 

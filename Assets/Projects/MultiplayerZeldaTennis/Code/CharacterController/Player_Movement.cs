@@ -10,15 +10,20 @@ public class Player_Movement : Photon.MonoBehaviour
 
     public float MovementSpeed = 10.0f;
 
+    private KeyframeList<Vector3> m_PositionKeyFrames;
+
     private Dictionary<double, Vector3> m_Keyframes;
 
     // Use this for initialization
     void Start()
     {
+        m_PositionKeyFrames = new KeyframeList<Vector3>();
+        #region testCode
 
+        /*
         // testing out my new Keyframelist class
         //
-        
+
         KeyframeList<Vector3> m_AutoSortedList = new KeyframeList<Vector3>();
         KeyframeList<Vector3> m_NonAutosortedList = new KeyframeList<Vector3>();
         m_NonAutosortedList.Autosort = false;
@@ -100,6 +105,8 @@ public class Player_Movement : Photon.MonoBehaviour
         
         */
 
+        
+        #endregion
     }
 
     // Update is called once per frame
@@ -113,6 +120,24 @@ public class Player_Movement : Photon.MonoBehaviour
             Vector3 actualMoveDirection = GetMaxMovementDirection(inputDirection);
 
             transform.position += actualMoveDirection * MovementSpeed * Time.deltaTime;
+        }
+        else
+        {
+            int index = m_PositionKeyFrames.GetIndexClosestTo(PhotonNetwork.time);
+
+            if (index != -1 && m_PositionKeyFrames.Count > 1)
+            {
+                // smoothing those movements
+                Vector3 mostRecentPosition = m_PositionKeyFrames[index].Value;
+                Vector3 currentPosition = transform.position;
+
+                double timeDelay = PhotonNetwork.time - m_PositionKeyFrames[index].Key; // this grows smaller every update
+                double timeBetweenKeyframes = m_PositionKeyFrames[index].Key - m_PositionKeyFrames[index - 1].Key;
+
+                Vector3 newPosition = Vector3.Lerp( currentPosition, mostRecentPosition , .2f);
+
+                transform.position = newPosition;
+            }
         }
     }
 
@@ -232,11 +257,26 @@ public class Player_Movement : Photon.MonoBehaviour
         
         if (stream.isWriting)
         {
-            // write position to stream
+            // write time & position to stream
+            stream.SendNext(PhotonNetwork.time);
+            stream.SendNext(transform.position);
+
         }
         else
         {
-            // read position from stream
+            // receive keyframe
+            double time = (double)stream.ReceiveNext();
+            Vector3 position = (Vector3)stream.ReceiveNext();
+            if (m_PositionKeyFrames == null) m_PositionKeyFrames = new KeyframeList<Vector3>();
+
+            m_PositionKeyFrames.Add(time, position);
+
+            if (m_PositionKeyFrames.Count > 2)
+            {
+                Debug.Log("removing old keyframes");
+                // remove old keyframes ( let's say 5 seconds old? )
+                m_PositionKeyFrames.RemoveAllBefore(time - 5);
+            }
         }
     }
 }
