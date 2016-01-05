@@ -127,12 +127,9 @@ public class Player_Movement : Photon.MonoBehaviour
 
             if (index != -1 && m_PositionKeyFrames.Count > 1)
             {
-                // smoothing those movements
+                // smoothing those movements, no prediction going on, just Interpolation
                 Vector3 mostRecentPosition = m_PositionKeyFrames[index].Value;
-                Vector3 currentPosition = transform.position;
-
-                double timeDelay = PhotonNetwork.time - m_PositionKeyFrames[index].Key; // this grows smaller every update
-                double timeBetweenKeyframes = m_PositionKeyFrames[index].Key - m_PositionKeyFrames[index - 1].Key;
+                Vector3 currentPosition = transform.position;                
 
                 Vector3 newPosition = Vector3.Lerp( currentPosition, mostRecentPosition , .2f);
 

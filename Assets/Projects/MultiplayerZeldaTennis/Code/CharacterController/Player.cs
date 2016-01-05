@@ -94,7 +94,7 @@ public class Player : Photon.MonoBehaviour
             {
                 case PlayerState.movement:
                     
-                    InputLookat();
+                    
 
                     if (Attack_Primary_Down())
                     {
@@ -133,12 +133,6 @@ public class Player : Photon.MonoBehaviour
         }
         else
         {
-            if (m_NetworkPackagesList.Count >= 2)
-            {
-
-                //SynchedMovement();
-                SynchedLookat();
-            }
 
         }
     }
@@ -171,35 +165,6 @@ public class Player : Photon.MonoBehaviour
         transform.position = newPos;
     }
 
-    [System.Obsolete]
-    void InputLookat() {
-        // handlemouselook
-        Ray screenToWorldRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        // debug value of 20 camera distance
-
-        transform.LookAt(screenToWorldRay.origin + screenToWorldRay.direction * 21f, Vector3.up);
-        transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y , 0f);
-        
-    }
-
-    [System.Obsolete]
-    void SynchedLookat() {
-
-        // Lerp between beginrot and endrot
-        float newRot = 0;
-
-        float RotX = ((networkData)m_NetworkPackagesList[0]).Rotation;
-        float lifeX = ((networkData)m_NetworkPackagesList[0]).Lifetime;
-
-        float RotY = ((networkData)m_NetworkPackagesList[1]).Rotation;
-        float lifeY = ((networkData)m_NetworkPackagesList[1]).Lifetime;
-
-
-        newRot = Mathf.LerpAngle(RotX, RotY, (m_Lifetime - lifeX) / (lifeY - lifeX));
-
-        transform.rotation = Quaternion.Euler(0, newRot, 0 );
-
-    }
 
     bool Attack_Primary_Down() {
         if (Input.GetMouseButtonDown(0)) {
@@ -265,7 +230,30 @@ public class Player : Photon.MonoBehaviour
         return adjusteddirection;
     }
 
-   
+    public void Kill()
+    {
+        Debug.Log("Destroying player object of player: " + Photonplayer);
+        // desintegrate or something?
+        PhotonNetwork.Destroy(photonView);
+
+
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // identify Other as deathball , and destroy player
+        BouncingProjectile proj = other.GetComponent<BouncingProjectile>();
+        if(proj != null)
+        {
+            if (photonView.isMine)
+            {
+                // kill self, send message to others that this player has died
+                Kill();
+            }
+
+
+        }
+    }
 
     // NETWORK
     // -------

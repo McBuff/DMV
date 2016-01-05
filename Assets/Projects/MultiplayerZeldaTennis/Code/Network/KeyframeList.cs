@@ -224,8 +224,6 @@ public class KeyframeList<T>
             }
         }
         return -1;
-
-        throw new NotImplementedException();
     }
     public int GetIndexClosestTo(double time)
     {

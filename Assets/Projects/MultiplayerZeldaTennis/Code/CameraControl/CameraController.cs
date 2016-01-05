@@ -12,13 +12,11 @@ public class CameraController : MonoBehaviour
 
     private Unity_CameraControl.CalculateCameraBehaviour m_CamController;
 
-    private float cameraSpeed;
-
     // Use this for initialization
     void Start()
     {
         CameraOffset = new Vector3(0, 15.0f, -2.0f);
-        cameraSpeed = .2f;
+        
 
         // Set camera's strategy to Idle
         SetCameraType(new Unity_CameraControl.Lerp());

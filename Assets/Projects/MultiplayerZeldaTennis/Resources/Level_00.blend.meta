@@ -19,6 +19,10 @@ ModelImporter:
     100022: Plane_004
     100024: Cube_006
     100026: Cube_007
+    100028: Deurgang
+    100030: Plinten
+    100032: Vloer
+    100034: Wand
     400000: //RootNode
     400002: Plane
     400004: Plane_001
@@ -33,6 +37,10 @@ ModelImporter:
     400022: Plane_004
     400024: Cube_006
     400026: Cube_007
+    400028: Deurgang
+    400030: Plinten
+    400032: Vloer
+    400034: Wand
     2300000: //RootNode
     2300002: Plane
     2300004: Plane_001
@@ -47,6 +55,10 @@ ModelImporter:
     2300022: Plane_004
     2300024: Cube_006
     2300026: Cube_007
+    2300028: Deurgang
+    2300030: Plinten
+    2300032: Vloer
+    2300034: Wand
     3300000: //RootNode
     3300002: Plane
     3300004: Plane_001
@@ -61,6 +73,10 @@ ModelImporter:
     3300022: Plane_004
     3300024: Cube_006
     3300026: Cube_007
+    3300028: Deurgang
+    3300030: Plinten
+    3300032: Vloer
+    3300034: Wand
     4300000: Plane
     4300002: Plane_001
     4300004: Cube
@@ -74,6 +90,10 @@ ModelImporter:
     4300020: Cube_002
     4300022: Cube_007
     4300024: Cube_006
+    4300026: Wand
+    4300028: Plinten
+    4300030: Deurgang
+    4300032: Vloer
     7400000: Default Take
     9500000: //RootNode
   materials:
@@ -104,7 +124,7 @@ ModelImporter:
     addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
@@ -119,7 +139,7 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     human: []
@@ -134,7 +154,7 @@ ModelImporter:
     rootMotionBoneName: 
     hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
