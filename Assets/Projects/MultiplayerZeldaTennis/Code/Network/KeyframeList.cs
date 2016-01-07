@@ -3,7 +3,11 @@ using System;
 
 public class KeyframeList<T> 
 {
+    #pragma warning disable 414
     private static readonly string version = "v00-30-12-2015";
+    #pragma warning restore 414
+
+
     // Internal class containing a double for time, and a T for data
     private class Pair: IComparable<Pair>
     {

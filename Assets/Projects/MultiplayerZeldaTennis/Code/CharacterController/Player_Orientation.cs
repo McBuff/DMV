@@ -6,9 +6,12 @@ public class Player_Orientation : Photon.MonoBehaviour
 
     private KeyframeList<double> m_OrientationKeyframesList;
 
+    public bool isFrozen;
+
 	// Use this for initialization
 	void Start () {
         m_OrientationKeyframesList = new KeyframeList<double>();
+        isFrozen = false;
     }
 	
 	// Update is called once per frame
@@ -25,6 +28,9 @@ public class Player_Orientation : Photon.MonoBehaviour
 
     // Updates internal logic as owner of object (player)
     void update_owner() {
+
+        if (isFrozen)
+            return;
 
         // handlemouselook
         Ray screenToWorldRay = Camera.main.ScreenPointToRay(Input.mousePosition);

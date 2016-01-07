@@ -155,34 +155,6 @@ public class Player : Photon.MonoBehaviour
         }
     }
 
-    ///// <summary>
-    ///// Handle movement using network data
-    ///// </summary>
-    //[System.Obsolete]
-    //private void SynchedMovement()
-    //{
-    //    // set up vars
-    //    Vector3 PosX = ((networkData)m_NetworkPackagesList[0]).P;
-    //    //Vector3 VelX = ((networkData)m_NetworkPackagesList[0]).V;
-    //    float LifetimeX = ((networkData)m_NetworkPackagesList[0]).Lifetime;
-
-    //    Vector3 PosY = ((networkData)m_NetworkPackagesList[1]).P;
-    //    //Vector3 VelY = ((networkData)m_NetworkPackagesList[1]).V;
-    //    float LifetimeY = ((networkData)m_NetworkPackagesList[1]).Lifetime;
-
-    //    // magic
-    //    float syncTimeSpan = LifetimeY - LifetimeX; // this is how old the object gets between 2 target values
-    //    float syncLife = m_Lifetime - LifetimeX - syncTimeSpan;// - 0.1f; // this is how much the object has aged in between targets
-
-    //    //Vector3 newPos = EstimatePositionLinear(PosX, VelX, syncLife);
-
-        
-    //    Vector3 newPos = Vector3.Lerp(PosX, PosY, syncLife/ syncTimeSpan);
-
-    //    // apply LOCAL
-    //    transform.position = newPos;
-    //}
-
 
     bool Attack_Primary_Down() {
         if (Input.GetMouseButtonDown(0)) {
@@ -190,68 +162,6 @@ public class Player : Photon.MonoBehaviour
         }
         return false;
     }
-
-    /*
-    /// <summary>
-    /// Estimate where a player is given a startpos, and a direction.
-    /// Works 2 ways.
-    /// </summary>
-    /// <param name="startpos"></param>
-    /// <param name="direction"></param>
-    /// <param name="dTime"></param>
-    /// <returns></returns>
-    [System.Obsolete]
-    Vector3 EstimatePositionLinear( Vector3 startpos, Vector3 direction, float dTime) {
-        // init
-        Vector3 estimatedPos = Vector3.zero;
-        Vector3 maxMovement = CalcMaxMoveDistanceInDirection(direction);
-
-        estimatedPos = startpos + maxMovement.normalized * dTime * speed;
-
-        return estimatedPos;
-    }
-
-    [System.Obsolete] 
-    Vector3 CalcMaxMoveDistanceInDirection(Vector3 direction) {
-        Vector3 adjusteddirection = Vector3.zero;
-        float minDistanceToMove = .5f;
-        // let's see if I CAN actually go the direction 
-        //TODO: check colliision layers
-        LayerMask mask = (1 << LayerMask.NameToLayer("WorldCollision"));
-        RaycastHit[] hits = Physics.RaycastAll(transform.position, direction , mask);
-        if (hits != null)
-        {
-            
-            // if hits are registered ( and there should be )
-            float shortestdistance = 10000.0f; // ultimate value
-
-            foreach (RaycastHit hit in hits)
-            {
-                // see if hitpoint is closer than the previous by measuring a difference in distance
-                float hitdistance = (hit.point - transform.position).magnitude;
-
-                if (shortestdistance > hitdistance) // if this distance is closer than the last one
-                    shortestdistance = hitdistance;
-            }
-
-            // now adjust the movement depending on if a thresshold is reached
-            if (shortestdistance > minDistanceToMove)
-                adjusteddirection = direction.normalized;
-            else adjusteddirection = direction * shortestdistance * 0f;
-            
-            // otherwise return zero vector
-            return adjusteddirection;
-
-                //newmovement += Vector3.forward;
-        }
-        else Debug.LogWarning("Wallcheck has detected no colliders, something is off!");
-        
-
-        return adjusteddirection;
-    }
-
-    */
-
 
     [PunRPC]
     public void Kill()
@@ -283,10 +193,13 @@ public class Player : Photon.MonoBehaviour
         EventLog.GetInstance().LogMessage(deathMessage);
     }
 
-    public void Freeze(bool freeze)
+    public void Freeze(bool freeze_position, bool freeze_lookat)
     {
         Player_Movement movementComp = GetComponent<Player_Movement>();
-        movementComp.enabled = freeze;
+        Player_Orientation lookAtComp = GetComponent<Player_Orientation>();
+        //movementComp.enabled = !freeze;
+        movementComp.isFrozen = freeze_position;
+        lookAtComp.isFrozen = freeze_lookat;
     }
 
     /// <summary>

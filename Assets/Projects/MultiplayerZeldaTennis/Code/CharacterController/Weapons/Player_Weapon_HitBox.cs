@@ -22,7 +22,7 @@ public class Player_Weapon_HitBox : Player_Weapon {
 
         if (isAttacking())
         {
-            Debug.LogWarning("Attacking!");
+            //TODO: play animation ( once I have a model )
             HitBoxObjectMeshRenderer.enabled = true;
             m_MyCollider.enabled = true;
 

@@ -6,12 +6,17 @@ using DMV.GameplaystateManager;
 /// <summary>
 /// Manages Game states and enforces game rules. Nothing more
 /// </summary>
+
+
 [RequireComponent (typeof (PhotonView))]
 public class GameplayManager : Photon.MonoBehaviour {
 
     // Enums 
     public GameplayStateType CurrentStateType;
     private GameplayStateType m_NextStateType;
+
+    //Dirty Dirty Code: TODO: Write a Projectile manager Class that manages ALL projectils
+    public BouncingProjectile DeathBallInstance;
 
     
     // State Object

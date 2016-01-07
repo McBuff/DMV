@@ -12,11 +12,14 @@ public class Player_Movement : Photon.MonoBehaviour
 
     private KeyframeList<Vector3> m_PositionKeyFrames;
 
+    public bool isFrozen;
     
 
     // Use this for initialization
     void Start()
     {
+        //isFrozen = false;
+
         m_PositionKeyFrames = new KeyframeList<Vector3>();
         #region testCode
 
@@ -119,7 +122,8 @@ public class Player_Movement : Photon.MonoBehaviour
             inputDirection = GetInputDirection(ControllerType.Keyboard);
             Vector3 actualMoveDirection = GetMaxMovementDirection(inputDirection);
 
-            transform.position += actualMoveDirection * MovementSpeed * Time.deltaTime;
+            if(isFrozen == false)
+                transform.position += actualMoveDirection * MovementSpeed * Time.deltaTime;
         }
         else
         {

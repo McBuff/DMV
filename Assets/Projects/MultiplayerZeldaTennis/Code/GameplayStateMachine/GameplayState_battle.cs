@@ -20,7 +20,7 @@ namespace DMV.GameplaystateManager
             PlayerManager.GetInstance().SpawnPlayers_All(); // I respawn everyone
 
             // Make sure ot Unfreeze all players
-            PlayerManager.GetInstance().SetPlayerFrozen_All(false);
+            PlayerManager.GetInstance().SetPlayerFrozen_All(false, false);
             // Server owner spawns a deathball in the middle of the room
             if (PhotonNetwork.player.isMasterClient)
             {
@@ -60,6 +60,9 @@ namespace DMV.GameplaystateManager
                     survivors[0].Photonplayer.AddScore(1);
                     AnnounceNextState(GameplayStateType.ending);
                 }
+                if( survivors.Count == 0){
+                    AnnounceNextState(GameplayStateType.ending);
+                }
 
 
             }
@@ -69,11 +72,15 @@ namespace DMV.GameplaystateManager
             
         }
 
+        /// <summary>
+        /// Spawns a deathball at the default position
+        /// </summary>
         protected void SpawnDeathBall()
         {
-            /*GameObject newObject =*/ PhotonNetwork.Instantiate("DeathBallv2", Vector3.up * .5f, Quaternion.identity, 0); // TODO: Use prefab.name
-
+            m_Owner.DeathBallInstance = PhotonNetwork.Instantiate("DeathBallv2", Vector3.up * .5f, Quaternion.identity, 0).GetComponent<BouncingProjectile>(); // TODO: Use prefab.name 
         }
+
+
         public override GameplayStateType GetCurrentStateType()
         {
             return GameplayStateType.battle;

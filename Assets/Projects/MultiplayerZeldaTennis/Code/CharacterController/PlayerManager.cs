@@ -222,8 +222,9 @@ public class PlayerManager : MonoBehaviour {
         // remove player data from own record
         for (int i = 0; i < m_PlayerInfoList.Count; i++)
         {
-            if (m_PlayerInfoList[i].PhotonPlayer == null)
+            if (m_PlayerInfoList[i].PhotonPlayer == null) // player has quit == null
             {
+                Debug.LogWarning("No player found to clean up!");
                 leftPlayerInfo = m_PlayerInfoList[i];                
                 m_PlayerInfoList[i] = new PlayerInfo(); // overwrite slot with null data
             }
@@ -237,14 +238,20 @@ public class PlayerManager : MonoBehaviour {
         }
 
         // Clear Player slot
-        ScoreBoard.GetInstance().ClearPlayerFromSlot(leftPlayerInfo.SlotID);
+        // find a player slot that is NOT 0
+
+
+        //ScoreBoard.GetInstance().ClearPlayerFromSlot(leftPlayerInfo.SlotID); 
+        ScoreBoard.GetInstance().RemovePlayer(photonPlayer);
+
 
         // despawn player if not despawned already
 
         // Write message that a player has left
         Color slotColor = GetPlayerSlotColor(leftPlayerInfo.SlotID);
 
-        string dcMessage = "<b>" + ColorUtility.ColorRichtText(slotColor, photonPlayer.name) + "</b> has disconnected." ;
+        string dcMessage = "<b>" + photonPlayer.name + "</b>" + " has disconnected.";
+
         EventLog.GetInstance().LogMessage(dcMessage);
 
         Debug.LogWarning("Player Disconnect is NOT fully implemented yet.");
@@ -309,7 +316,7 @@ public class PlayerManager : MonoBehaviour {
         return newPlayerObject;
     }
 
-    public void SetPlayerFrozen_All(bool frozen)
+    public void SetPlayerFrozen_All(bool frozen_position, bool frozen_lookat)
     {
         // Freeze all players
         for (int i = 0; i < m_PlayerInfoList.Count; i++)
@@ -318,7 +325,7 @@ public class PlayerManager : MonoBehaviour {
             if (playerComp == null)
                 continue;
 
-            playerComp.Freeze(frozen);
+            playerComp.Freeze(frozen_position, frozen_lookat);
 
         }
     }

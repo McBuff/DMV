@@ -17,7 +17,24 @@ namespace DMV.GameplaystateManager
         {
             // init... some... things???
 
+
+            // Show scoreboard
+            ScoreBoard.GetInstance().SetVisibility(false);
+
             // make sure the level is clean maybe, I dunno
+
+            // clear up all projectiles 
+            if (m_Owner.DeathBallInstance != null )
+            {
+                // destroy 
+                if (PhotonNetwork.isMasterClient)
+                    PhotonNetwork.Destroy(m_Owner.DeathBallInstance.gameObject);
+            }
+
+            // Freeze all players
+            PlayerManager.GetInstance().SetPlayerFrozen_All(false, false);
+
+
             base.Init();
         }
 
@@ -27,7 +44,7 @@ namespace DMV.GameplaystateManager
             if ( Input.GetKeyDown(KeyCode.F1))
             {
                 // announce next state
-                Debug.LogWarning("Setnextstate!");
+                Debug.Log("Manually Advancing to countdown state, server pressed F1");
                 AnnounceNextState(GameplayStateType.countdown);
                 //m_Owner.SetNextGameplayState();
             }

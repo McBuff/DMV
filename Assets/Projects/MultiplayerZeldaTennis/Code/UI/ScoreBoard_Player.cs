@@ -61,7 +61,7 @@ public class ScoreBoard_Player : MonoBehaviour {
     }
     private void updateScoreField() {
 
-        this.transform.GetChild(3).GetComponent<Text>().text = "0";
+        this.transform.GetChild(3).GetComponent<Text>().text = AssignedPlayer.GetScore().ToString();
 
     }
     private void UpdatePingField() {

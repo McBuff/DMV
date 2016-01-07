@@ -7,7 +7,9 @@ namespace DMV.GameplaystateManager
 {
     class GameplayState_countdown : GameplayState
     {
+        // Timer Used to go to next state
         private Local_Timer m_Timer;
+
         public GameplayState_countdown(GameplayManager owner, double starttime) : base(owner, starttime)
         {
 
@@ -32,13 +34,15 @@ namespace DMV.GameplaystateManager
             PlayerManager.GetInstance().SpawnPlayers_All();
 
             // Freeze all players
-            PlayerManager.GetInstance().SetPlayerFrozen_All(true);
+            PlayerManager.GetInstance().SetPlayerFrozen_All(true, false);
 
                         // Move Camera to Countdown position
             CameraPresetData presetData = CameraManager.GetInstance().GetCameraPresetPosition("CameraPreset_Countdown");
             CameraManager.GetInstance().LerpTo(presetData.CameraPos, presetData.CameraTarget);
 
-            
+            // Hide scoreboard
+            ScoreBoard.GetInstance().SetVisibility(false);
+
 
             #region old code
             /*
@@ -59,14 +63,17 @@ namespace DMV.GameplaystateManager
             //    player_movement.enabled = false;
             //}
             */
-            #endregion  
+            #endregion
 
             base.Init();
         }
 
         public override void Update()
         {
-            if(m_Timer != null)
+
+            // Freeze all players
+
+            if (m_Timer != null)
             {
                 m_Timer.updateTimer();
 

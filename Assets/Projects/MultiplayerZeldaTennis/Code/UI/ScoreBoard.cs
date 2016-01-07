@@ -7,11 +7,14 @@ public class ScoreBoard : MonoBehaviour {
     public RectTransform PlayerListRect;
     private static ScoreBoard h_Instance;
 
+    private bool m_IsVisible;
+
     private Vector3 ScoreboardScreenPos;
 	// Use this for initialization
 	void Start () {
         h_Instance = this;
         ScoreboardScreenPos = this.transform.position;
+        m_IsVisible = false;
     }
 	
 	// Update is called once per frame
@@ -19,13 +22,17 @@ public class ScoreBoard : MonoBehaviour {
         
         // I've tried disabling the scoreboard, but this causes glitchy behaviour when assigning players to a slot
         // Therefore, I just offset the scoreboard Out of the screen
-        
-        // old code:
-        //child.gameObject.SetActive(Input.GetKey(KeyCode.Tab));   
 
-        // new code:
         Vector3 Offset = new Vector3(10000, 10000,0);
-        if(Input.GetKey(KeyCode.Tab))
+
+        // TAB 
+        if (Input.GetKeyDown(KeyCode.Tab))
+            ToggleVisibility();
+
+        if (Input.GetKeyUp(KeyCode.Tab))
+            ToggleVisibility();
+
+        if (m_IsVisible)            
             Offset = Vector3.zero;
 
         transform.position = ScoreboardScreenPos + Offset;
@@ -72,6 +79,7 @@ public class ScoreBoard : MonoBehaviour {
     {
         // iterate over all scoreboard slots and assign player to correct slot
         ScoreBoard_Player[] scoreboardSlots = GetComponentsInChildren<ScoreBoard_Player>();
+
         for (int i = 0; i < scoreboardSlots.Length; i++)
         {
             if (scoreboardSlots[i].SlotIndex == slotIndex)
@@ -79,5 +87,43 @@ public class ScoreBoard : MonoBehaviour {
                 scoreboardSlots[i].AssignedPlayer = null;
             }
         }
+    }
+
+    public void RemovePlayer(PhotonPlayer player)
+    {
+        // iterate over all scoreboard slots and assign player to correct slot
+        ScoreBoard_Player[] scoreboardSlots = GetComponentsInChildren<ScoreBoard_Player>();
+
+        for (int i = 0; i < scoreboardSlots.Length; i++)
+        {
+            if (scoreboardSlots[i].AssignedPlayer == player)
+            {
+                scoreboardSlots[i].AssignedPlayer = null;
+            }
+        }
+    }
+
+    public void RefreshPlayerSlots()
+    {
+        // iterate over all scoreboard slots and assign player to correct slot
+        ScoreBoard_Player[] scoreboardSlots = GetComponentsInChildren<ScoreBoard_Player>();
+
+        for (int i = 0; i < scoreboardSlots.Length; i++)
+        {
+            if (scoreboardSlots[i].AssignedPlayer == null)
+            {
+                
+            }
+        }
+    }
+
+    public void ToggleVisibility()
+    {
+        m_IsVisible = !m_IsVisible;
+    }
+
+    public void SetVisibility(bool isVisible)
+    {
+        m_IsVisible = isVisible;
     }
 }

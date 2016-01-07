@@ -43,7 +43,7 @@ public class WeaponCollisionManager : MonoBehaviour {
         {
 
             // some debug info
-            Debug.Log("WeaponCollisionManager has hit a ball. Telling abll to be Hit!");
+            //Debug.Log("WeaponCollisionManager has hit a ball. Telling ball to be Hit!");
 
             // a deathball was hit, change its direction and increase its speed
             Vector3 newDirection = (dBall.transform.position - m_Owner.transform.position);

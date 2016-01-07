@@ -88,6 +88,11 @@ namespace Toolbox
         public Local_Timer() { }
 
 
+        public int GetSecondsLeft()
+        {
+            return (int)Math.Truncate(GetTimeleft());
+        }
+
         /// <summary>
         /// Starts timer
         /// </summary>
@@ -104,7 +109,7 @@ namespace Toolbox
             m_endTime = endTime;
             isFinished = false;
             isRunning = true;
-            Debug.LogWarning("Timer set for: " + m_endTime);
+            //Debug.LogWarning("Timer set for: " + m_endTime);
         }
 
         public void updateTimer()
@@ -123,6 +128,8 @@ namespace Toolbox
         public double GetTimeleft() {
             return m_endTime - Time.time;
         }
+
+
 
     }
 }

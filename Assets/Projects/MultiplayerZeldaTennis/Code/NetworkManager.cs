@@ -19,7 +19,7 @@ public class NetworkManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         Debug.Log("Initting Network manager!");
-        PhotonNetwork.ConnectUsingSettings("0.4");
+        PhotonNetwork.ConnectUsingSettings("av1.0");
         PlayerID = -1;
 
     }
@@ -43,7 +43,10 @@ public class NetworkManager : MonoBehaviour {
             PlayerName = GUI.TextField(new Rect(100, 50, 100, 30), PlayerName, 20);
             // Create Room
             if (GUI.Button(new Rect(100, 100, 500, 100), "Start Server"))
+            {
+                PhotonNetwork.player.name = PlayerName;
                 PhotonNetwork.CreateRoom(roomName + Guid.NewGuid().ToString("N"), new RoomOptions() { maxPlayers = 4 }, null);
+            }
 
             // Join Room
             if (roomsList != null)
@@ -54,6 +57,7 @@ public class NetworkManager : MonoBehaviour {
                     if (GUI.Button(new Rect(100, 250 + (95 * i), 500, 90), "Join " + roomsList[i].name))
                     {
                         PhotonNetwork.player.name = "ClientPlayer " + Time.time;
+                        //PhotonNetwork.player.name = PlayerName;
                         PhotonNetwork.JoinRoom(roomsList[i].name);
                     }
                 }
@@ -90,7 +94,7 @@ public class NetworkManager : MonoBehaviour {
         // Display a message to the player
         if (PhotonNetwork.masterClient == PhotonNetwork.player)
         {
-            PhotonNetwork.player.name = "ServerPlayer";
+            //PhotonNetwork.player.name = "ServerPlayer";
             PlayerManager.GetInstance().AddPlayerToPlayerManager(PhotonNetwork.player.ID, 0);
             EventLog.GetInstance().LogMessage("Created room! You are the host!");
         }
@@ -172,7 +176,6 @@ public class NetworkManager : MonoBehaviour {
     void OnPhotonPlayerDisconnected( PhotonPlayer player)
     {
         // Notify player that player has disconnected
-
 
         // Clean up player info
         PlayerManager.GetInstance().RemovePlayerFromPlayerManager(player);
