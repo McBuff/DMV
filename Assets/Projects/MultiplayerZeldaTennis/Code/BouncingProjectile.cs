@@ -45,7 +45,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
        if (photonView.isMine)
             Update_ServerCompute();
-        else Update_ClientPredict();
+        else Update_ClientPredict_Lerp();
 	}
 
     void DrawBuffer( Color color)
@@ -65,48 +65,14 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
     #region Updates
 
-    /// <summary>
-    /// basic interpolation network sync. Standard LERP
-    /// </summary>
-    void Update_NetSync() {
-
-        if (m_PacketBuffer.Count > 1)
-        {
-            DrawBuffer(Color.blue);
-
-            Projectile2DState leftState =   GetPackageBefore(PhotonNetwork.time - ArticifialDelay);
-            Projectile2DState rightState=   GetPackageAfter(PhotonNetwork.time - ArticifialDelay);
-            
-            double currentDTIME = PhotonNetwork.time - leftState.stateTime - ArticifialDelay;
-            double targetDTIME = rightState.stateTime - leftState.stateTime;
-
-            float lerpValue = (float) (currentDTIME / targetDTIME);
-            transform.position = new Vector3(Mathf.Lerp(leftState.Position.x , rightState.Position.x , lerpValue)
-                                                , 0,
-                                            Mathf.Lerp(leftState.Position.y, rightState.Position.y, lerpValue));
-        }
-
-    }
-
-
-    /// <summary>
-    /// Moves the ball ( using physics )
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <param name="dir"></param>
-    /// <param name="dTime"></param>
-    void DoMoveBall(Vector3 pos, Vector3 dir, float dTime) {
-
-    }
 
     /// <summary>
     /// Clientside prediction algorithm, for players posessing this object
     /// </summary>
+    [System.Obsolete]
     void Update_ClientPredict() {
 
         // get most recent package and calculate position from there?
-
-
         if (m_PacketBuffer.Count > 0)
         {
                 // init variables
@@ -130,7 +96,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
             float dTime = Time.deltaTime;
             
 
-            if(m_lastUsedPacket.stateTime.CompareTo( serverTime) == -1)
+            if(m_lastUsedPacket.stateTime.CompareTo(currentPackage.stateTime) == -1)
             {
                 // new packet is used for the first time
                 float packAge =(float)( clientTime - serverTime);
@@ -166,13 +132,48 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     }
 
     /// <summary>
-    /// Clientside prediction algorithm for players NOT possessing this object
+    /// Updates local client version of the ball, mixing server data and locally simulated data
     /// </summary>
-    void Update_ClientSync() {
-        
-        // 
-    }
+    void Update_ClientPredict_Lerp()
+    {
 
+        if (m_PacketBuffer.Count == 0)
+            return;
+        
+        
+        // Estimated Result given by server data
+        Vector3 predictionResult = Vector3.zero;
+        Projectile2DState lastPackage = GetLastPackage();
+
+        double timeSinceLastPackageState = PhotonNetwork.time - lastPackage.stateTime;
+
+        predictionResult = CalculateProjectilePos(lastPackage.Position3() + Vector3.up * .5f, lastPackage.Direction3(), MovementSpeed, (float)timeSinceLastPackageState);// + Time.deltaTime);
+
+
+        // Locally Simulated result
+        Vector3 simulationResult = CalculateProjectilePos(transform.position, Direction, MovementSpeed, Time.deltaTime);
+
+  
+        Direction.y = 0;
+        Direction.Normalize();
+
+        // blend the 2 results
+        float epsillon = (predictionResult - simulationResult).magnitude;
+        float maxEpsillon = 1f;
+
+        Vector3 blendedPosition = Vector3.Lerp(simulationResult, predictionResult , epsillon / maxEpsillon);
+        //Vector3 blendedDirection = Vector3.Lerp(Direction, lastPackage.Direction3(), epsillon / maxEpsillon); // to not blend yet
+
+        transform.position = blendedPosition;
+        Rigidbody rbdy = GetComponent<Rigidbody>();
+        rbdy.velocity = Vector3.zero;
+
+        
+        
+        Direction = lastPackage.Direction3();
+        //rbdy.MovePosition(blendedPosition);
+
+    }
 
     /// <summary>
     /// Owner calculation algorithm , for Servercontroller object to stream to clients
@@ -250,42 +251,66 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision)
     {
-        if (photonView.isMine || true)
+    // invert direction on collision
+        foreach (ContactPoint contact in collision.contacts)
         {
-            // invert direction on collision
-            foreach (ContactPoint contact in collision.contacts)
+            Debug.DrawRay(contact.point + Vector3.up, contact.normal, Color.red, 5);
+            Vector3 N = contact.normal;
+
+            N.Normalize();
+
+
+            Vector3 D = Direction;
+
+            Vector3 R = Reflect(D, N);
+
+            // send a package to all clients that a bounce took place here!
+
+            // make sure I remove Y
+            R.y = 0;
+            R.Normalize();
+
+
+            // calc Overshoot and adjust ball position accordingly
+            float collisionSphereRadius = 1.5f / 2f; // TODO: using collisionsphere size set in Collision method
+            float overshoot = collisionSphereRadius - (contact.point - transform.position).magnitude;
+
+            // only correct the position of this object is heading TOWARD the wall
+            // if the angle between NORMAL and R is less than 90 degrees. I can estimate that the object is already moving away from
+            // the contact point
+            float deltaNormalCurrentDirection = Vector3.Angle(contact.normal, Direction);
+
+            if (deltaNormalCurrentDirection < 90)
+                return; // exit
+
+            if (PhotonNetwork.isMasterClient)
             {
-                Debug.DrawRay(contact.point + Vector3.up, contact.normal, Color.red, 5);
-                Vector3 N = contact.normal;
-
-                N.Normalize();
-
-
-                Vector3 D = Direction;
-
-                Vector3 R = Reflect(D, N);
-
-                // make sure I remove Y
-                R.y = 0;
-                R.Normalize();
-
-                
                 Direction = R;
 
-                // calc Overshoot and adjust ball position accordingly
-                float collisionSphereRadius = 1.5f/2f; // WARNING: using collisionsphere size set in Collision method
-                float overshoot = collisionSphereRadius - (contact.point - transform.position).magnitude;
+            }
 
-                // put balla long further on its path ( distance of overshoot )
-                Rigidbody rbdy = GetComponent<Rigidbody>();
-                rbdy.velocity = Vector3.zero;
-                rbdy.MovePosition(transform.position + (Direction * overshoot) );
-                //transform.position = transform.position + (Direction * overshoot);
+            Rigidbody rbdy = GetComponent<Rigidbody>();
+            rbdy.velocity = Vector3.zero;
 
+            Vector3 correctedPosition = transform.position + (Direction * overshoot);
+            
+            rbdy.MovePosition(correctedPosition);
 
+            
+            
+            // Send custom packet to clients. With some luck it arrives 
+            if (PhotonNetwork.isMasterClient == false)
+            {
+                // I let the CLIENT add a package right after the collision, so that it is later on fooled into thinking the server orchestrated a bounce here.
+                //AddManualPackage(correctedPosition, R, PhotonNetwork.time);
+                Projectile2DState newPacket = new Projectile2DState(PhotonNetwork.time, correctedPosition, R, false);
+                AddPacketToBuffer(newPacket);
+                SortPacketBuffer();
 
             }
+                
         }
+        
     }
     Vector3 Reflect(Vector3 v, Vector3 n)
     {
@@ -336,12 +361,30 @@ public class BouncingProjectile : Photon.MonoBehaviour{
                 receivedState.stateTime = (double)stream.ReceiveNext();
                 receivedState.Position = (Vector2)stream.ReceiveNext();
                 receivedState.Direction = (Vector2)stream.ReceiveNext();
+                receivedState.ServerVerified = true;
+
+                if (m_PacketBuffer == null)
+                    m_PacketBuffer = new List<Projectile2DState>();
 
                 AddPacketToBuffer(receivedState);
                 SortPacketBuffer();
                 CleanPacketBuffer( PhotonNetwork.time - 1f); // remove old packets if possible
             }
         }
+    }
+
+    /// <summary>
+    /// Add a custom keyframe to a client's list of keyframes. Helps improve accuracy
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="dir"></param>
+    /// <param name="stateTime"></param>
+    [PunRPC]    
+    void AddManualPackage(Vector3 pos, Vector3 dir, double stateTime)
+    {
+        Projectile2DState newState = new Projectile2DState(stateTime, pos, dir);
+        AddPacketToBuffer(newState);
+        SortPacketBuffer();
     }
 
     /// <summary>
@@ -469,6 +512,19 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
     }
 
+    [PunRPC]
+    public void BallHit(Vector3 hitpos, Vector3 newDirection , double netTime)
+    {
+        if (MovementSpeed == 0)
+            MovementSpeed = 10;
+        else MovementSpeed += 5;
+
+        Direction = newDirection;
+        // add new keyframe
+        Projectile2DState newKeyFrame = new Projectile2DState(netTime, hitpos, newDirection, false);
+        AddPacketToBuffer(newKeyFrame);
+    }
+
     Projectile2DState GetLastPackage() {
         return m_PacketBuffer[m_PacketBuffer.Count - 1];
     }
@@ -488,23 +544,25 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
 public struct Projectile2DState {
 
-    public Projectile2DState(double time, Vector2 pos, Vector2 dir ) {
-        stateTime = time;
-        Position = pos;
-        Direction = dir;
-    }
+    //public Projectile2DState(double time, Vector2 pos, Vector2 dir , bool serververified = true ) {
+    //    stateTime = time;
+    //    Position = pos;
+    //    Direction = dir;
+    //    ServerVerified = serververified;
+    //}
 
-    public Projectile2DState(double time, Vector3 pos, Vector3 dir )
+    public Projectile2DState(double time, Vector3 pos, Vector3 dir, bool serververified = true)
     {
         stateTime = time;
         Position = new Vector2( pos.x, pos.z );
         Direction = new Vector2(dir.x, dir.z);
-
+        ServerVerified = serververified;
     }
 
     public double stateTime;
     public Vector2 Position;
     public Vector2 Direction;
+    public bool ServerVerified;
 
     public Vector3 Position3() { return new Vector3(Position.x, 0, Position.y); }
     public Vector3 Direction3() { return new Vector3(Direction.x, 0, Direction.y); }

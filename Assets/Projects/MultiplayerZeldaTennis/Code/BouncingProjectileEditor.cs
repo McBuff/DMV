@@ -40,8 +40,15 @@ public class BouncingProjectileEditor : Editor
             // draw little + for points
             DrawCross(points[i].Position3() + Vector3.up, .2f, Color.white, visualizationTime);
 
-            // draw little + for points
-            DrawArrow(points[i].Position3() + Vector3.up, points[i].Direction3(), .5f, Color.yellow, visualizationTime);
+            // draw little -> for points
+            Color targetColor = Color.yellow;
+            if (points[i].ServerVerified == false)
+                targetColor = Color.cyan;
+
+            if (i != 0)
+                DrawSegment(points[i].Position3() + Vector3.up * .9f, points[i - 1].Position3() + Vector3.up * .9f, Color.green, visualizationTime);
+
+            DrawArrow(points[i].Position3() + Vector3.up, points[i].Direction3(), .5f, targetColor, visualizationTime);
         }
 
         

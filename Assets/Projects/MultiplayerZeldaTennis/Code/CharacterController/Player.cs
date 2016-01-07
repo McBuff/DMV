@@ -4,8 +4,15 @@ using System.Collections;
 public class Player : Photon.MonoBehaviour
 {
 
+    // Settings
+    //------------
+    public GameObject Prefab_FX_DeathEffect;
+    public GameObject Prefab_PlayerWeapon;
+
     // Network player, used to identity the player owning this object
     public PhotonPlayer Photonplayer;
+
+    
 
     [System.Obsolete]
     public float speed = 5f;
@@ -59,7 +66,12 @@ public class Player : Photon.MonoBehaviour
         m_CurrentState = PlayerState.movement;
         m_CurrentStateStartTime = 0;
 
-       
+        // Load Player Weapon
+        if (Prefab_PlayerWeapon == null)
+            Debug.LogWarning("Player: " + Photonplayer.name + " does not have a weapon assigned!");
+        GameObject playerWeaponObject = (GameObject) Instantiate(Prefab_PlayerWeapon , transform.position, transform.rotation);
+        m_Weapon = playerWeaponObject.GetComponent<Player_Weapon>();
+        playerWeaponObject.transform.SetParent(this.transform);
     }
 
     void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -87,26 +99,18 @@ public class Player : Photon.MonoBehaviour
 
         if (photonView.isMine)
         {
-
-
             // act on current state
             switch (m_CurrentState)
             {
                 case PlayerState.movement:
-                    
-                    
-
                     if (Attack_Primary_Down())
-                    {
-                        
+                    {                        
                         object[] parameters = { PlayerState.attacking, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y };
                         photonView.RPC("SetPlayerState", PhotonTargets.Others, parameters);
                         SetPlayerState((int) PlayerState.attacking, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y);
                     }
-
                     break;
                 case PlayerState.attacking:
-
                     if (m_Lifetime - m_CurrentStateStartTime > .3f)
                     {
                         object[] parameters = { PlayerState.movement, m_Lifetime, transform.position, Direction, transform.rotation.eulerAngles.y };
@@ -133,37 +137,51 @@ public class Player : Photon.MonoBehaviour
         }
         else
         {
+            
+            
+        }
 
+        // disable/enable player movement when attacking
+        // disable player movement while attacking
+        if (m_Weapon.isAttacking())
+        {
+            GetComponent<Player_Movement>().enabled = false;
+            GetComponent<Player_Orientation>().enabled = false;
+        }
+        else
+        {
+            GetComponent<Player_Movement>().enabled = true;
+            GetComponent<Player_Orientation>().enabled = true;
         }
     }
 
-    /// <summary>
-    /// Handle movement using network data
-    /// </summary>
-    [System.Obsolete]
-    private void SynchedMovement()
-    {
-        // set up vars
-        Vector3 PosX = ((networkData)m_NetworkPackagesList[0]).P;
-        //Vector3 VelX = ((networkData)m_NetworkPackagesList[0]).V;
-        float LifetimeX = ((networkData)m_NetworkPackagesList[0]).Lifetime;
+    ///// <summary>
+    ///// Handle movement using network data
+    ///// </summary>
+    //[System.Obsolete]
+    //private void SynchedMovement()
+    //{
+    //    // set up vars
+    //    Vector3 PosX = ((networkData)m_NetworkPackagesList[0]).P;
+    //    //Vector3 VelX = ((networkData)m_NetworkPackagesList[0]).V;
+    //    float LifetimeX = ((networkData)m_NetworkPackagesList[0]).Lifetime;
 
-        Vector3 PosY = ((networkData)m_NetworkPackagesList[1]).P;
-        //Vector3 VelY = ((networkData)m_NetworkPackagesList[1]).V;
-        float LifetimeY = ((networkData)m_NetworkPackagesList[1]).Lifetime;
+    //    Vector3 PosY = ((networkData)m_NetworkPackagesList[1]).P;
+    //    //Vector3 VelY = ((networkData)m_NetworkPackagesList[1]).V;
+    //    float LifetimeY = ((networkData)m_NetworkPackagesList[1]).Lifetime;
 
-        // magic
-        float syncTimeSpan = LifetimeY - LifetimeX; // this is how old the object gets between 2 target values
-        float syncLife = m_Lifetime - LifetimeX - syncTimeSpan;// - 0.1f; // this is how much the object has aged in between targets
+    //    // magic
+    //    float syncTimeSpan = LifetimeY - LifetimeX; // this is how old the object gets between 2 target values
+    //    float syncLife = m_Lifetime - LifetimeX - syncTimeSpan;// - 0.1f; // this is how much the object has aged in between targets
 
-        //Vector3 newPos = EstimatePositionLinear(PosX, VelX, syncLife);
+    //    //Vector3 newPos = EstimatePositionLinear(PosX, VelX, syncLife);
 
         
-        Vector3 newPos = Vector3.Lerp(PosX, PosY, syncLife/ syncTimeSpan);
+    //    Vector3 newPos = Vector3.Lerp(PosX, PosY, syncLife/ syncTimeSpan);
 
-        // apply LOCAL
-        transform.position = newPos;
-    }
+    //    // apply LOCAL
+    //    transform.position = newPos;
+    //}
 
 
     bool Attack_Primary_Down() {
@@ -172,6 +190,8 @@ public class Player : Photon.MonoBehaviour
         }
         return false;
     }
+
+    /*
     /// <summary>
     /// Estimate where a player is given a startpos, and a direction.
     /// Works 2 ways.
@@ -191,7 +211,7 @@ public class Player : Photon.MonoBehaviour
         return estimatedPos;
     }
 
-    [System.Obsolete]
+    [System.Obsolete] 
     Vector3 CalcMaxMoveDistanceInDirection(Vector3 direction) {
         Vector3 adjusteddirection = Vector3.zero;
         float minDistanceToMove = .5f;
@@ -230,24 +250,67 @@ public class Player : Photon.MonoBehaviour
         return adjusteddirection;
     }
 
+    */
+
+
+    [PunRPC]
     public void Kill()
     {
         Debug.Log("Destroying player object of player: " + Photonplayer);
-        // desintegrate or something?
-        PhotonNetwork.Destroy(photonView);
 
 
+        // add desintegration to my own Mesh
+        //gameObject.AddComponent<Obliterate_Object>();
+        if(Prefab_FX_DeathEffect != null)
+        {
+            GameObject deathEffect =  Instantiate(Prefab_FX_DeathEffect);
+            deathEffect.transform.position = transform.position;
+    
+        }
+
+        // announce player death
+        if(photonView.isMine)
+            PhotonNetwork.Destroy(gameObject);
+        // TODO: Move camera to countdown position
+
+        // Log player death
+        string deathMessage = "";
+        
+        int playerSlot = PlayerManager.GetInstance().GetPlayerSlot(Photonplayer);
+        Color playerColor = PlayerManager.GetInstance().GetPlayerSlotColor(playerSlot);
+        deathMessage = "<b>" + ColorUtility.ColorRichtText(playerColor, Photonplayer.name) + "</b>" + " was vaporized!";
+
+        EventLog.GetInstance().LogMessage(deathMessage);
     }
 
+    public void Freeze(bool freeze)
+    {
+        Player_Movement movementComp = GetComponent<Player_Movement>();
+        movementComp.enabled = freeze;
+    }
+
+    /// <summary>
+    /// Called when either I, or a child of mine triggers with another object
+    /// </summary>
+    /// <param name="other"></param>
     void OnTriggerEnter(Collider other)
     {
+        // do nothing if colliding with child object
+        if (other.transform.IsChildOf(this.transform))
+            return;
+
         // identify Other as deathball , and destroy player
         BouncingProjectile proj = other.GetComponent<BouncingProjectile>();
         if(proj != null)
         {
+
             if (photonView.isMine)
             {
+                
+                Debug.Log(this.name + " has hit the ball, should I terminate?");
+
                 // kill self, send message to others that this player has died
+                photonView.RPC("Kill", PhotonTargets.Others, null);
                 Kill();
             }
 
@@ -258,6 +321,14 @@ public class Player : Photon.MonoBehaviour
     // NETWORK
     // -------
 
+    /// <summary>
+    /// Changes player's state
+    /// </summary>
+    /// <param name="newState"></param>
+    /// <param name="EventTime"></param>
+    /// <param name="playerPosition"></param>
+    /// <param name="playerDirection"></param>
+    /// <param name="playerOrientation"></param>
     [PunRPC]
     void SetPlayerState(int newState, float EventTime, Vector3 playerPosition, Vector3 playerDirection, float playerOrientation) {
 
@@ -267,11 +338,11 @@ public class Player : Photon.MonoBehaviour
         m_CurrentState = newPlayerState;
         m_CurrentStateStartTime = EventTime;
 
-
+        // Player Attack Code
         if (newPlayerState == PlayerState.attacking)
         {
             // enable attack weapon thing and fire it
-            m_Weapon.gameObject.SetActive(true);
+            //m_Weapon.gameObject.SetActive(true);
             m_Weapon.Attack(playerOrientation);
         }
 

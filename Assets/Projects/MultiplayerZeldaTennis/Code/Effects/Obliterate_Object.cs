@@ -16,9 +16,12 @@ public class Obliterate_Object : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        
         // ramp up colors of this model to fullbright & fade away
         MeshRenderer meshRenderer = ModelObject.GetComponent<MeshRenderer>();
         meshRenderer.material.color = Color.Lerp(meshRenderer.material.color, new Color(1,1,1,0), .1f);
 
+        if (meshRenderer.material.color.a < 0.05f)
+            meshRenderer.enabled = false;
 	}
 }

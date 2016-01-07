@@ -56,6 +56,8 @@ GameObject:
   - 114: {fileID: 11487268}
   - 199: {fileID: 19947602}
   - 198: {fileID: 19857262}
+  - 82: {fileID: 8234710}
+  - 164: {fileID: 16498024}
   m_Layer: 0
   m_Name: DeathBallv2
   m_TagString: Untagged
@@ -398,6 +400,76 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 1
+--- !u!82 &8234710
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153014}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 74149e928746f6447808efd9462ab48c, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: .191
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  Priority: 220
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!96 &9607982
 TrailRenderer:
   m_ObjectHideFlags: 1
@@ -706,7 +778,7 @@ MonoBehaviour:
   MovementSpeed: 0
   previousPosition: {x: 0, y: 0, z: 0}
   nextPosition: {x: 0, y: 0, z: 0}
-  ArticifialDelay: 0
+  ArticifialDelay: .100000001
 --- !u!114 &11498212
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -776,6 +848,29 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: .75
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!164 &16498024
+AudioReverbFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 153014}
+  m_Enabled: 1
+  m_DryLevel: 0
+  m_Room: -1000
+  m_RoomHF: -1000
+  m_RoomRolloff: 0
+  m_DecayTime: 2.80999994
+  m_DecayHFRatio: .140000001
+  m_ReflectionsLevel: 429
+  m_ReverbLevel: 1023
+  m_ReverbDelay: .0209999997
+  m_Diffusion: 80
+  m_Density: 60
+  m_HFReference: 5000
+  m_RoomLF: 0
+  m_LFReference: 250
+  m_ReflectionsDelay: 0
+  m_ReverbPreset: 22
 --- !u!198 &19857262
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -1879,6 +1974,66 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: ArticifialDelay
+      value: .100000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 74149e928746f6447808efd9462ab48c, type: 3}
+    - target: {fileID: 0}
+      propertyPath: Priority
+      value: 220
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Volume
+      value: .191
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Room
+      value: -1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_RoomHF
+      value: -1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_RoomRolloff
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_DecayTime
+      value: 2.80999994
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_DecayHFRatio
+      value: .140000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_ReflectionsLevel
+      value: 429
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_ReverbLevel
+      value: 1023
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_ReverbDelay
+      value: .0209999997
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Diffusion
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Density
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_ReverbPreset
+      value: 22
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

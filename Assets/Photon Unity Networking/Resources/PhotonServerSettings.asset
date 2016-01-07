@@ -37,4 +37,7 @@ MonoBehaviour:
   - SetGameplayState
   - SetPlayerID
   - AddPlayerToPlayerManager
+  - BallHit
+  - AddManualPackage
+  - Kill
   DisableAutoOpenWizard: 1

@@ -154,11 +154,28 @@ public class PlayerManager : MonoBehaviour {
         return null;
     }
 
+    
     public Player GetPlayerObjectInSlot(int slotIndex)
     {
         Debug.LogError("GetPlayerObjectInSlot: Not Implemented yet!");
         return null;
     }
+    
+    /// <summary>
+    /// Returns all player objects
+    /// </summary>
+    /// <returns></returns>
+    public List<Player> GetAllPlayerObjects()
+    {
+        List<Player> playerList = new List<Player>();
+        for (int i = 0; i < m_PlayerInfoList.Count; i++)
+        {
+            playerList.Add(m_PlayerInfoList[i].PlayerObject);
+            
+        }
+        return playerList;
+    }
+
 
     public Player GetPlayerObject(PhotonPlayer photonPlayer)
     {
@@ -226,7 +243,8 @@ public class PlayerManager : MonoBehaviour {
 
         // Write message that a player has left
         Color slotColor = GetPlayerSlotColor(leftPlayerInfo.SlotID);
-        string dcMessage = "<b>" + ColorUtility.ColorToRichTextTag(slotColor) + photonPlayer.name + "</color>" + "</b> has disconnected." ;
+
+        string dcMessage = "<b>" + ColorUtility.ColorRichtText(slotColor, photonPlayer.name) + "</b> has disconnected." ;
         EventLog.GetInstance().LogMessage(dcMessage);
 
         Debug.LogWarning("Player Disconnect is NOT fully implemented yet.");
@@ -290,6 +308,21 @@ public class PlayerManager : MonoBehaviour {
 
         return newPlayerObject;
     }
+
+    public void SetPlayerFrozen_All(bool frozen)
+    {
+        // Freeze all players
+        for (int i = 0; i < m_PlayerInfoList.Count; i++)
+        {
+            Player playerComp = m_PlayerInfoList[i].PlayerObject;
+            if (playerComp == null)
+                continue;
+
+            playerComp.Freeze(frozen);
+
+        }
+    }
+
     public void DeSpawnPlayer(PhotonPlayer photonPlayer) { throw new System.Exception("Not Implemented Yet!"); }
 
     /// <summary>

@@ -79,7 +79,7 @@ public class Player_Orientation : Photon.MonoBehaviour
 
             if (m_OrientationKeyframesList.Count > 2)
             {
-                Debug.Log("removing old keyframes");
+                //Debug.Log("removing old keyframes");
                 // remove old keyframes ( let's say 5 seconds old? )
                 m_OrientationKeyframesList.RemoveAllBefore(time - 5);
             }

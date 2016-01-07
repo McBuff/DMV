@@ -17,9 +17,12 @@ namespace DMV.GameplaystateManager
         {
             // init... some... things???
 
-            // make sure the level is clean maybe, I dunno
+            // freeze all objects & players
+            
 
             // Camera goes back to countdown
+            CameraPresetData presetData = CameraManager.GetInstance().GetCameraPresetPosition("CameraPreset_Countdown");
+            CameraManager.GetInstance().LerpTo(presetData.CameraPos, presetData.CameraTarget);
 
             base.Init();
         }

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using Toolbox;
 using System;
 
@@ -31,7 +31,10 @@ namespace DMV.GameplaystateManager
             
             PlayerManager.GetInstance().SpawnPlayers_All();
 
-            // Move Camera to Countdown position
+            // Freeze all players
+            PlayerManager.GetInstance().SetPlayerFrozen_All(true);
+
+                        // Move Camera to Countdown position
             CameraPresetData presetData = CameraManager.GetInstance().GetCameraPresetPosition("CameraPreset_Countdown");
             CameraManager.GetInstance().LerpTo(presetData.CameraPos, presetData.CameraTarget);
 
@@ -73,10 +76,12 @@ namespace DMV.GameplaystateManager
 
             }
 
-            if (m_Owner.debugMode && Input.GetKeyDown(KeyCode.F1))
+            //Manual skip ( server side )
+            if (Input.GetKeyDown(KeyCode.F1))
             {
                 // announce next state
-                AnnounceNextState(GameplayStateType.battle);
+                if (PhotonNetwork.isMasterClient)
+                    AnnounceNextState(GameplayStateType.battle);
             }
 
 

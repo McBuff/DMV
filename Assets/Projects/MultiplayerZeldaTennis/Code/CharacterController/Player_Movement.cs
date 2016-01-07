@@ -12,7 +12,7 @@ public class Player_Movement : Photon.MonoBehaviour
 
     private KeyframeList<Vector3> m_PositionKeyFrames;
 
-    private Dictionary<double, Vector3> m_Keyframes;
+    
 
     // Use this for initialization
     void Start()
@@ -270,7 +270,7 @@ public class Player_Movement : Photon.MonoBehaviour
 
             if (m_PositionKeyFrames.Count > 2)
             {
-                Debug.Log("removing old keyframes");
+                //Debug.Log("removing old keyframes");
                 // remove old keyframes ( let's say 5 seconds old? )
                 m_PositionKeyFrames.RemoveAllBefore(time - 5);
             }

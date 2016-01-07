@@ -24,7 +24,7 @@ namespace DMV.GameplaystateManager
         public override void Update()
         {
             
-            if ( m_Owner.debugMode && Input.GetKeyDown(KeyCode.F1))
+            if ( Input.GetKeyDown(KeyCode.F1))
             {
                 // announce next state
                 Debug.LogWarning("Setnextstate!");

@@ -13,6 +13,7 @@ public class GameplayManager : Photon.MonoBehaviour {
     public GameplayStateType CurrentStateType;
     private GameplayStateType m_NextStateType;
 
+    
     // State Object
     private GameplayState m_CurrentState;
     
@@ -27,7 +28,6 @@ public class GameplayManager : Photon.MonoBehaviour {
         m_NextStateType = GameplayStateType.waiting; 
 
         m_CurrentState = new GameplayState_waiting(this , PhotonNetwork.time);
-
         m_CurrentState.Init();
    } 
 	
@@ -93,7 +93,7 @@ public class GameplayManager : Photon.MonoBehaviour {
     /// Sets up the stage for the NEXT gameplay state, note that this is only relevant for the SERVER
     /// </summary>
     /// <param name="type"></param>
-    public void SetNextGameplayState( GameplayStateType type)
+    public void SetNextGameplayState( GameplayStateType type )
     {
         m_NextStateType = type;
     }

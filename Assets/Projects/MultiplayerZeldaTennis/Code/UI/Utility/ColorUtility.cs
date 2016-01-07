@@ -48,6 +48,7 @@ public class ColorUtility : MonoBehaviour {
     /// </summary>
     /// <param name="color"></param>
     /// <returns></returns>
+    [System.Obsolete(" This method is inpractical, use ColorRichtText instead!")]
     public static string ColorToRichTextTag(UnityEngine.Color color)
     {
         string colorvalue = ColorToHex(color);
@@ -56,6 +57,13 @@ public class ColorUtility : MonoBehaviour {
         return returnvalue;
     }
 
+
+    /// <summary>
+    /// Encloses given text in Richtext Color tag of chosen Unity Color
+    /// </summary>
+    /// <param name="color"></param>
+    /// <param name="text"></param>
+    /// <returns></returns>
     public static string ColorRichtText( UnityEngine.Color color, string text)
     {
         string colorvalue = ColorToHex(color);

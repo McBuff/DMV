@@ -1,15 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Player_Weapon : MonoBehaviour {
+public class Player_Weapon_Swipe : Player_Weapon {
 
     
-    private float Duration = .05f;
-
-    private float startTime = 0;
-    
-
-    private float m_PlayerAttackDirection;
 	// Use this for initialization
 	void Start () {
 	
@@ -23,15 +17,14 @@ public class Player_Weapon : MonoBehaviour {
 
 
         // if attack is not yet finished, do attack
-        float endTime = Duration + startTime;
-        if( Time.time <= endTime && startTime != 0)
+        if(isAttacking())
         {
             bCol.enabled = true;
             bMesh.enabled = true;
 
 
             // attack code
-            float attackProgress = (Time.time - startTime) / (endTime - startTime);
+            float attackProgress = GetAttackProgress();
             float currentAngle = Mathf.LerpAngle(-45 , 45 , attackProgress);
             transform.rotation = Quaternion.Euler( 0, m_PlayerAttackDirection + currentAngle, 0);
             
@@ -47,10 +40,10 @@ public class Player_Weapon : MonoBehaviour {
 
 	}
 
-    public void Attack(float attackdirection, float starttime = 0) {
+    public override void Attack(float attackdirection, float starttime = 0) {
         if (starttime == 0)
-            startTime = Time.time;
-        else startTime = starttime;
+            AttackStartTime = Time.time;
+        else AttackStartTime = starttime;
 
         m_PlayerAttackDirection = attackdirection;
     }

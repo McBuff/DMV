@@ -13,9 +13,17 @@ public class DebugGUI : MonoBehaviour {
     private RectTransform m_Rect;
     private bool m_GUIActive = false;
 
+
+    public RectTransform DeathBallInfoPanel;
+
+
+    private bool ShowDeathBallInfo;
+
      	// Use this for initialization
 	void Start () {
-        
+
+        ShowDeathBallInfo = false;
+
         m_Rect = GetComponent<RectTransform>();
         m_OffScreenSet = m_Rect.position;
     }
@@ -39,5 +47,12 @@ public class DebugGUI : MonoBehaviour {
         m_GUIActive = !m_GUIActive;
 
         // change position
+    }
+
+    public void ToggleDeathBallInfo()
+    {
+        ShowDeathBallInfo = !ShowDeathBallInfo;
+        DeathBallInfoPanel.transform.gameObject.SetActive(ShowDeathBallInfo);
+
     }
 }
