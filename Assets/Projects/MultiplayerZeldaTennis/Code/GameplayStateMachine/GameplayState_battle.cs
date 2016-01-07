@@ -55,7 +55,7 @@ namespace DMV.GameplaystateManager
                 }
 
                 // annoucne next state
-                if (survivors.Count == 1 && Input.GetKeyDown(KeyCode.F1 ))
+                if (survivors.Count == 1)
                 {
                     survivors[0].Photonplayer.AddScore(1);
                     AnnounceNextState(GameplayStateType.ending);

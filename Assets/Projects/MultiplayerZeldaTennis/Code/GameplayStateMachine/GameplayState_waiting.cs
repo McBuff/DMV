@@ -48,8 +48,18 @@ namespace DMV.GameplaystateManager
                 AnnounceNextState(GameplayStateType.countdown);
                 //m_Owner.SetNextGameplayState();
             }
-                        
-            
+
+            int numConnectedPlayers = PhotonNetwork.playerList.Length;
+
+            if (numConnectedPlayers > 1)
+            {
+                // announce next state
+                Debug.Log("Automatically Advancing to countdown state, 2 players are present");
+                AnnounceNextState(GameplayStateType.countdown);
+                //m_Owner.SetNextGameplayState();
+            }
+
+
         }
 
         public override GameplayStateType GetCurrentStateType()
