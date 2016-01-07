@@ -158,7 +158,7 @@ public class Player_Movement : Photon.MonoBehaviour
                 // keyboard
                 bool inputRegistered = false;
 
-                if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Z))
+                if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q))
                 {
                     inputRegistered = true;
                     inputDirection += Vector3.left;
