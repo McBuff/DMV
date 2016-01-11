@@ -15,6 +15,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     public Vector3 Direction;
     public float MovementSpeed;
 
+    public static float MaxMovementSpeed = 35f;
 
     public Vector3 previousPosition;
     public Vector3 nextPosition;
@@ -515,15 +516,28 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     [PunRPC]
     public void BallHit(Vector3 hitpos, Vector3 newDirection , double netTime)
     {
+
         if (MovementSpeed == 0)
-            MovementSpeed = 10;
-        else MovementSpeed += 5;
+            AdjustMovementSpeed(+8.0f);
+        else AdjustMovementSpeed(+5f);
 
         Direction = newDirection;
         // add new keyframe
         Projectile2DState newKeyFrame = new Projectile2DState(netTime, hitpos, newDirection, false);
         AddPacketToBuffer(newKeyFrame);
     }
+
+    /// <summary>
+    /// Adjust movement speed ( add or subtract )
+    /// </summary>
+    /// <param name="amount"></param>
+    public void AdjustMovementSpeed( float amount)
+    {
+        MovementSpeed += amount;
+
+        Mathf.Clamp(MovementSpeed, 0, MaxMovementSpeed);
+    }
+
 
     Projectile2DState GetLastPackage() {
         return m_PacketBuffer[m_PacketBuffer.Count - 1];
