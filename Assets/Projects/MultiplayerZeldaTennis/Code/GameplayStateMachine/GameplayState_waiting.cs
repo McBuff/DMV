@@ -38,28 +38,26 @@ namespace DMV.GameplaystateManager
             base.Init();
         }
 
+        /// <summary>
+        /// Update logic
+        /// </summary>
         public override void Update()
+        {            
+
+            if (isStateFinished())
+            {                
+                AnnounceNextState(GameplayStateType.countdown);
+            }
+
+        }
+
+        public override bool isStateFinished()
         {
-            
-            if ( Input.GetKeyDown(KeyCode.F1))
-            {
-                // announce next state
-                Debug.Log("Manually Advancing to countdown state, server pressed F1");
-                AnnounceNextState(GameplayStateType.countdown);
-                //m_Owner.SetNextGameplayState();
-            }
-
             int numConnectedPlayers = PhotonNetwork.playerList.Length;
+            bool baseState = base.isStateFinished();
+            bool waitingState = (numConnectedPlayers > 1);
 
-            if (numConnectedPlayers > 1)
-            {
-                // announce next state
-                Debug.Log("Automatically Advancing to countdown state, 2 players are present");
-                AnnounceNextState(GameplayStateType.countdown);
-                //m_Owner.SetNextGameplayState();
-            }
-
-
+            return baseState || waitingState;
         }
 
         public override GameplayStateType GetCurrentStateType()

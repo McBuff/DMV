@@ -71,26 +71,33 @@ namespace DMV.GameplaystateManager
 
                 int secondsLeft = m_Timer.GetSecondsLeft();
 
-                #if(  DEBUG )
-                Debug.Log("Seconds left: " + secondsLeft + "countdownbufferLength: " + m_CountdownTextBuffer.Count);
-                #endif 
+#if (DEBUG)
+                Debug.Log(string.Format("Seconds left: {0} , countdownbufferLength: {1}", secondsLeft, m_CountdownTextBuffer.Count ));
+#endif 
 
 
-                if( m_CountdownTextBuffer.Count - 1 == secondsLeft)
+                if( m_CountdownTextBuffer.Count - 1 == secondsLeft && (m_CountdownTextBuffer.Count != 0))
                 {
                     // Print LAST item, and remove it
                     EventLog.GetInstance().LogMessage(m_CountdownTextBuffer[m_CountdownTextBuffer.Count - 1]);
+                    
                     m_CountdownTextBuffer.RemoveAt(m_CountdownTextBuffer.Count - 1);
 
                 }
 
-                if (m_Timer.isFinished)
+                if (isStateFinished())
                     AnnounceNextState(GameplayStateType.waiting);
 
             }
 
         }
+        public override bool isStateFinished()
+        {
+            bool baseState = base.isStateFinished();
+            bool endState = m_Timer.isFinished;
 
+            return baseState && endState;
+        }
         public override GameplayStateType GetCurrentStateType()
         {
             return GameplayStateType.ending;
