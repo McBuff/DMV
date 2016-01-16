@@ -8,6 +8,9 @@ using System.Collections;
 /// </summary>
 public class DebugGUI : MonoBehaviour {
 
+    //Singleton
+    private static DebugGUI h_Instance;
+
     public KeyCode ToggleButton;
     private Vector3 m_OffScreenSet;
     private RectTransform m_Rect;
@@ -15,12 +18,13 @@ public class DebugGUI : MonoBehaviour {
 
 
     public RectTransform DeathBallInfoPanel;
-
+    public RectTransform GameplayStateInfoPanel;
 
     private bool ShowDeathBallInfo;
+    private bool ShowGameplayStateInfo;
 
-     	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
         ShowDeathBallInfo = false;
 
@@ -49,10 +53,40 @@ public class DebugGUI : MonoBehaviour {
         // change position
     }
 
+    public void ToggleGameplayStateInfo()
+    {
+        ShowGameplayStateInfo = !ShowGameplayStateInfo;
+        GameplayStateInfoPanel.transform.gameObject.SetActive(ShowGameplayStateInfo);
+    }
+
     public void ToggleDeathBallInfo()
     {
         ShowDeathBallInfo = !ShowDeathBallInfo;
         DeathBallInfoPanel.transform.gameObject.SetActive(ShowDeathBallInfo);
 
+    }
+
+    public bool GameState_DoManualProgression()
+    {
+        Transform child = GameplayStateInfoPanel.GetChild(0); // TODO: find actual child
+
+        return child.GetComponent<Toggle>().isOn;
+    }
+
+
+    /// <summary>
+    /// Returns Instance singleton
+    /// </summary>
+    /// <returns></returns>
+    public static DebugGUI GetInstance()
+    {
+        if(h_Instance == null)
+        {
+            // find instance
+            h_Instance = GameObject.FindObjectOfType<DebugGUI>();
+            if (h_Instance == null)
+                Debug.LogWarning("DebugGUI is called but no instance was found!");
+        }
+        return h_Instance;
     }
 }

@@ -1,7 +1,11 @@
-﻿using UnityEngine;
+﻿//#define DEBUG
+
+using UnityEngine;
 using System.Collections.Generic;
 using Toolbox;
 using System;
+
+
 
 namespace DMV.GameplaystateManager
 {
@@ -67,8 +71,10 @@ namespace DMV.GameplaystateManager
 
                 int secondsLeft = m_Timer.GetSecondsLeft();
 
-                // count = seconds left -1 ( so index 4 = 3 seconds )
+                #if(  DEBUG )
                 Debug.Log("Seconds left: " + secondsLeft + "countdownbufferLength: " + m_CountdownTextBuffer.Count);
+                #endif 
+
 
                 if( m_CountdownTextBuffer.Count - 1 == secondsLeft)
                 {

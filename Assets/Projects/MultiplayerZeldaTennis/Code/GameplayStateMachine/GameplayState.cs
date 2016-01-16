@@ -34,6 +34,21 @@ namespace DMV.GameplaystateManager
         public abstract GameplayStateType GetCurrentStateType();
 
         /// <summary>
+        /// Returns true if next state should be announced. Base handles debug overrides
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool isStateFinished()
+        {
+            /// Debug
+            bool doManualProgression = DebugGUI.GetInstance().GameState_DoManualProgression();
+
+            if (doManualProgression == false)
+                return true;
+
+            return doManualProgression && Input.GetKeyDown(KeyCode.F1);            
+        }
+
+        /// <summary>
         /// Tells owner to change states on next update cycle
         /// </summary>
         protected void AnnounceNextState(GameplayStateType stateType) {

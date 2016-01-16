@@ -18,7 +18,7 @@ public class GameplayManager : Photon.MonoBehaviour {
     //Dirty Dirty Code: TODO: Write a Projectile manager Class that manages ALL projectils
     public BouncingProjectile DeathBallInstance;
 
-    
+   
     // State Object
     private GameplayState m_CurrentState;
     

@@ -42,6 +42,20 @@ namespace DMV.GameplaystateManager
 
         public override void Update()
         {
+         
+            if(isStateFinished())
+            {
+                AnnounceNextState(GameplayStateType.ending);
+            }
+            
+        }
+
+
+        public override bool isStateFinished()
+        {
+            // contains debug info
+            bool baseResult = base.isStateFinished();
+            bool stateResult = false;
 
             // as soon as numplayers reaches 1, call game end and move to state ending!
             if (PhotonNetwork.isMasterClient)
@@ -54,22 +68,20 @@ namespace DMV.GameplaystateManager
                         survivors.Add(plr);
                 }
 
-                // annoucne next state
+                // annoucne next state 
                 if (survivors.Count == 1)
                 {
                     survivors[0].Photonplayer.AddScore(1);
-                    AnnounceNextState(GameplayStateType.ending);
+                    stateResult = true;
                 }
-                if( survivors.Count == 0){
-                    AnnounceNextState(GameplayStateType.ending);
+                if (survivors.Count == 0)
+                {
+                    stateResult = true;
                 }
-
 
             }
+            return (baseResult && stateResult); // only if base and state are true, shall I progress to the enxt state
 
-            
-
-            
         }
 
         /// <summary>
