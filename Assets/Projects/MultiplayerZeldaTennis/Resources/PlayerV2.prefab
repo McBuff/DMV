@@ -451,6 +451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a569413de7e46f47977d7370c0592b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFrozen: 0
 --- !u!114 &11402180
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -504,7 +505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 765336fe20883d149918ac5fc6c3a2c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Duration: .600000024
+  Duration: .400000006
 --- !u!114 &11463908
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -517,6 +518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovementSpeed: 10
+  isFrozen: 0
 --- !u!114 &11474738
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -629,6 +631,10 @@ Prefab:
       propertyPath: FX_DeathEffect
       value: 
       objectReference: {fileID: 113320, guid: 51ebf5a33ae525d4eae5b76e69f4ee7c, type: 2}
+    - target: {fileID: 0}
+      propertyPath: Duration
+      value: .400000006
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 101762}

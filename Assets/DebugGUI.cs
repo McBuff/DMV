@@ -12,7 +12,9 @@ public class DebugGUI : MonoBehaviour {
     private static DebugGUI h_Instance;
 
     public KeyCode ToggleButton;
+    [System.Obsolete()]
     private Vector3 m_OffScreenSet;
+    [System.Obsolete()]
     private RectTransform m_Rect;
     private bool m_GUIActive = false;
 
@@ -26,10 +28,22 @@ public class DebugGUI : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+        // close menus
         ShowDeathBallInfo = false;
+        DeathBallInfoPanel.gameObject.SetActive(ShowDeathBallInfo);
 
-        m_Rect = GetComponent<RectTransform>();
-        m_OffScreenSet = m_Rect.position;
+        ShowGameplayStateInfo = false;
+        GameplayStateInfoPanel.gameObject.SetActive(ShowGameplayStateInfo);
+
+        // move menu to correct world position
+
+        RectTransform rect = GetComponent<RectTransform>();
+        rect.position = new Vector2(Screen.width / 2, rect.position.y);
+
+
+        SetGUIActive(false);
+        //m_Rect = GetComponent<RectTransform>();
+        //m_OffScreenSet = m_Rect.position;
     }
 	
 	// Update is called once per frame
@@ -38,19 +52,25 @@ public class DebugGUI : MonoBehaviour {
         if (Input.GetKeyDown(ToggleButton))
             ToggleGUI();
 
-        if (m_GUIActive)
-            m_Rect.position = new Vector3(m_Rect.rect.width *.5f, m_OffScreenSet.y, 0);
-        else 
-            m_Rect.position = Vector3.zero + m_OffScreenSet;
-
     }
 
     public void ToggleGUI()
     {
-        //toggle
-        m_GUIActive = !m_GUIActive;
+        SetGUIActive(!m_GUIActive);
+        
+    }
 
-        // change position
+    /// <summary>
+    /// Enable/Disable Debug GUI overlay
+    /// </summary>
+    /// <param name="active"></param>
+    public void SetGUIActive(bool active)
+    {
+        //toggle
+        m_GUIActive = active;
+
+        // set child active/inactive
+        transform.GetChild(0).gameObject.SetActive(active);
     }
 
     public void ToggleGameplayStateInfo()
@@ -71,6 +91,17 @@ public class DebugGUI : MonoBehaviour {
         Transform child = GameplayStateInfoPanel.GetChild(0); // TODO: find actual child
 
         return child.GetComponent<Toggle>().isOn;
+    }
+
+    public void SpawnCharacterController()
+    {
+
+    }
+
+    
+    public bool GetPlayerHitBoxEnabled()
+    {
+        return GameplayStateInfoPanel.GetChild(2).GetComponent<Toggle>().isOn;
     }
 
 

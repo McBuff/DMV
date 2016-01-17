@@ -222,9 +222,14 @@ public class Player : Photon.MonoBehaviour
                 
                 Debug.Log(this.name + " has hit the ball, should I terminate?");
 
+                bool hitBoxEnabled = DebugGUI.GetInstance().GetPlayerHitBoxEnabled();
+
                 // kill self, send message to others that this player has died
-                photonView.RPC("Kill", PhotonTargets.Others, null);
-                Kill();
+                if (hitBoxEnabled)
+                {
+                    photonView.RPC("Kill", PhotonTargets.Others, null);
+                    Kill();
+                }
             }
 
 

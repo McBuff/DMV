@@ -535,7 +535,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
     {
         MovementSpeed += amount;
 
-        Mathf.Clamp(MovementSpeed, 0, MaxMovementSpeed);
+        MovementSpeed = Mathf.Clamp(MovementSpeed, 0, MaxMovementSpeed);
     }
 
 
