@@ -217,20 +217,18 @@ public class PlayerManager : MonoBehaviour {
     public void RemovePlayerFromPlayerManager( PhotonPlayer photonPlayer)
     {
         // copy of left player data
-        PlayerInfo leftPlayerInfo = new PlayerInfo();
+        //PlayerInfo leftPlayerInfo = new PlayerInfo();
 
         // remove player data from own record
         for (int i = 0; i < m_PlayerInfoList.Count; i++)
         {
             if (m_PlayerInfoList[i].PhotonPlayer == null) // player has quit == null
             {
-                Debug.LogWarning("No player found to clean up!");
-                leftPlayerInfo = m_PlayerInfoList[i];                
+                Debug.LogWarning("No player found to clean up!");      
                 m_PlayerInfoList[i] = new PlayerInfo(); // overwrite slot with null data
             }
             else if ( m_PlayerInfoList[i].PhotonPlayer.ID == photonPlayer.ID)
             {
-                leftPlayerInfo = m_PlayerInfoList[i];
                 m_PlayerInfoList[i] = new PlayerInfo(); // overwrite slot with null data
             }
             
@@ -248,7 +246,7 @@ public class PlayerManager : MonoBehaviour {
         // despawn player if not despawned already
 
         // Write message that a player has left
-        Color slotColor = GetPlayerSlotColor(leftPlayerInfo.SlotID);
+        //Color slotColor = GetPlayerSlotColor(leftPlayerInfo.SlotID);
 
         string dcMessage = "<b>" + photonPlayer.name + "</b>" + " has disconnected.";
 
