@@ -1,0 +1,460 @@
+fileFormatVersion: 2
+guid: f305ed27b5edecc48a47237243831460
+timeCreated: 1453655384
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Armature
+    100002: b_innerrim_back
+    100004: b_innerrim_front
+    100006: b_innerrim_left
+    100008: b_innerrim_right
+    100010: b_outerrim_back
+    100012: b_outerrim_front
+    100014: b_outerrim_left
+    100016: b_outerrim_right
+    100018: b_spin_1
+    100020: b_spin_tip
+    100022: b_spine_0
+    100024: b_spine_2
+    100026: b_spine_base
+    100028: c_back
+    100030: c_base
+    100032: c_front
+    100034: c_hat_rim_ring
+    100036: c_left
+    100038: c_right
+    100040: c_top
+    100042: e_circle_Rim
+    100044: e_circle_root
+    100046: e_sphere
+    100048: Mesh
+    100050: root
+    100052: //RootNode
+    400000: Armature
+    400002: b_innerrim_back
+    400004: b_innerrim_front
+    400006: b_innerrim_left
+    400008: b_innerrim_right
+    400010: b_outerrim_back
+    400012: b_outerrim_front
+    400014: b_outerrim_left
+    400016: b_outerrim_right
+    400018: b_spin_1
+    400020: b_spin_tip
+    400022: b_spine_0
+    400024: b_spine_2
+    400026: b_spine_base
+    400028: c_back
+    400030: c_base
+    400032: c_front
+    400034: c_hat_rim_ring
+    400036: c_left
+    400038: c_right
+    400040: c_top
+    400042: e_circle_Rim
+    400044: e_circle_root
+    400046: e_sphere
+    400048: Mesh
+    400050: root
+    400052: //RootNode
+    2300000: e_circle_Rim
+    2300002: e_circle_root
+    3300000: e_circle_Rim
+    3300002: e_circle_root
+    4300000: e_circle_Rim
+    4300002: e_circle_root
+    4300004: Mesh
+    7400000: Default Take
+    7400002: debug
+    7400004: float_down
+    7400006: idle
+    7400008: fall
+    7400010: Walk
+    9500000: //RootNode
+    13700000: Mesh
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: debug
+      takeName: debug
+      firstFrame: -1
+      lastFrame: 25
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/root
+        weight: 1
+      - path: Armature/root/c_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back/b_outerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front/b_outerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left/b_outerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right/b_outerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2/b_spin_tip
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/c_top
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_back
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_front
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_left
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_right
+        weight: 1
+      - path: e_circle_Rim
+        weight: 1
+      - path: e_circle_root
+        weight: 1
+      - path: e_sphere
+        weight: 1
+      - path: Mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: fall
+      takeName: fall
+      firstFrame: -1
+      lastFrame: 21
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/root
+        weight: 1
+      - path: Armature/root/c_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back/b_outerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front/b_outerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left/b_outerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right/b_outerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2/b_spin_tip
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/c_top
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_back
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_front
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_left
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_right
+        weight: 1
+      - path: e_circle_Rim
+        weight: 1
+      - path: e_circle_root
+        weight: 1
+      - path: e_sphere
+        weight: 1
+      - path: Mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: idle
+      takeName: idle
+      firstFrame: -1
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/root
+        weight: 1
+      - path: Armature/root/c_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back/b_outerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front/b_outerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left/b_outerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right/b_outerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2/b_spin_tip
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/c_top
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_back
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_front
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_left
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_right
+        weight: 1
+      - path: e_circle_Rim
+        weight: 1
+      - path: e_circle_root
+        weight: 1
+      - path: e_sphere
+        weight: 1
+      - path: Mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Walk
+      takeName: Walk
+      firstFrame: -1
+      lastFrame: 15
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/root
+        weight: 1
+      - path: Armature/root/c_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_back/b_outerrim_back
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_front/b_outerrim_front
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_left/b_outerrim_left
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_innerrim_right/b_outerrim_right
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/b_spine_0/b_spin_1/b_spine_2/b_spin_tip
+        weight: 1
+      - path: Armature/root/c_base/b_spine_base/c_top
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_back
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_front
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_left
+        weight: 1
+      - path: Armature/root/c_base/c_hat_rim_ring/c_right
+        weight: 1
+      - path: e_circle_Rim
+        weight: 1
+      - path: e_circle_root
+        weight: 1
+      - path: e_sphere
+        weight: 1
+      - path: Mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: root
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

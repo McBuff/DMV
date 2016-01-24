@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Toolbox;
 using System;
+using Player;
 
 namespace DMV.GameplaystateManager
 {
@@ -33,8 +34,9 @@ namespace DMV.GameplaystateManager
             
             PlayerManager.GetInstance().SpawnPlayers_All();
 
-            // Freeze all players
-            PlayerManager.GetInstance().SetPlayerFrozen_All(true, false);
+            // Root all players
+
+            PlayerManager.GetInstance().AddPlayerCondition_All( typeof(Condition_Rooted) );
 
                         // Move Camera to Countdown position
             CameraPresetData presetData = CameraManager.GetInstance().GetCameraPresetPosition("CameraPreset_Countdown");

@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Toolbox;
 using System;
-
+using Player;
 
 
 namespace DMV.GameplaystateManager
@@ -35,7 +35,7 @@ namespace DMV.GameplaystateManager
 
 
             // freeze all objects & players
-            PlayerManager.GetInstance().SetPlayerFrozen_All(true,true);
+            PlayerManager.GetInstance().AddPlayerCondition_All(typeof(Condition_Frozen));
             // is there a deahball?
             if(m_Owner.DeathBallInstance != null)
                 m_Owner.DeathBallInstance.MovementSpeed = 0;

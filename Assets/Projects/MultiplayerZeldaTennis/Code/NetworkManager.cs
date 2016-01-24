@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Player;
 
 public class NetworkManager : MonoBehaviour {
 
@@ -13,7 +14,7 @@ public class NetworkManager : MonoBehaviour {
     
     public GameObject SpawnpointList;
 
-    public string PlayerName = "Player Name";
+    public string PlayerName = "PlayerController Name";
 
     public int PlayerID;
     // Use this for initialization

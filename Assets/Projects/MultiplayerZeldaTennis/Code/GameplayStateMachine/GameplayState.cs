@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Toolbox;
-
+using Player;
 
 namespace DMV.GameplaystateManager
 {

@@ -2,6 +2,7 @@
 using System.Collections;
 using Toolbox;
 using System;
+using Player;
 
 namespace DMV.GameplaystateManager
 {
@@ -32,7 +33,9 @@ namespace DMV.GameplaystateManager
             }
 
             // Freeze all players
-            PlayerManager.GetInstance().SetPlayerFrozen_All(false, false);
+            PlayerManager.GetInstance().RemovePlayerConditions_All();
+            
+            //PlayerManager.GetInstance().SetPlayerFrozen_All(false, false);
 
 
             base.Init();

@@ -47,7 +47,7 @@ public class DemoMecanimGUI : PunBehaviour
         }
 
         // the prefab has to be tagged as Player
-        GameObject[] gos = GameObject.FindGameObjectsWithTag( "Player" );
+        GameObject[] gos = GameObject.FindGameObjectsWithTag( "PlayerController" );
         for( int i = 0; i < gos.Length; ++i )
         {
             PhotonView view = gos[ i ].GetComponent<PhotonView>();

@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using Player;
 
 namespace DMV.GameplaystateManager
 {
     class GameplayState_battle: GameplayState
     {
-        protected List<Player> m_PlayerList;
+        protected List<Player.PlayerController> m_PlayerList;
         public GameplayState_battle(GameplayManager owner, double starttime) : base(owner, starttime)
         {
             
@@ -19,8 +19,9 @@ namespace DMV.GameplaystateManager
             // Set all player positions to their respective spawn positions and enable movement
             PlayerManager.GetInstance().SpawnPlayers_All(); // I respawn everyone
 
-            // Make sure ot Unfreeze all players
-            PlayerManager.GetInstance().SetPlayerFrozen_All(false, false);
+            // Make sure to UnRoot all players
+            PlayerManager.GetInstance().RemovePlayerConditions_All();
+            
             // Server owner spawns a deathball in the middle of the room
             if (PhotonNetwork.player.isMasterClient)
             {
@@ -29,7 +30,7 @@ namespace DMV.GameplaystateManager
                 
 
             // Set Camera to follow player
-            Player localplayer = PlayerManager.GetInstance().GetLocalPlayerObject();
+            PlayerController localplayer = PlayerManager.GetInstance().GetLocalPlayerObject();
             CameraManager.GetInstance().LerpFollow(localplayer.transform);
 
             // TODO: Start music
@@ -60,10 +61,10 @@ namespace DMV.GameplaystateManager
             // as soon as numplayers reaches 1, call game end and move to state ending!
             if (PhotonNetwork.isMasterClient)
             {
-                List<Player> survivors = new List<Player>();
+                List<PlayerController> survivors = new List<PlayerController>();
                 for (int i = 0; i < m_PlayerList.Count; i++)
                 {
-                    Player plr = m_PlayerList[i];
+                    PlayerController plr = m_PlayerList[i];
                     if (plr != null)
                         survivors.Add(plr);
                 }
