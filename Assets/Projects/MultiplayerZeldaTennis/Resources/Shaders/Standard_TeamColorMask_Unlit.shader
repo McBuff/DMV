@@ -52,7 +52,47 @@
 				return o;
 			}
 			
-			
+			// Blending Modes
+			float4 Overlay(float4 cBase, float4 cBlend)
+			{
+				//http://tech-artists.org/wiki/Blending_functions
+				/*
+				float4 cNew;
+				if (cBase.r > .5) { cNew.r = 1 - (1 - 2 * (cBase.r - .5)) * (1 - cBlend.r); }
+				else { cNew.r = (2 * cBase.r) * cBlend.r; }
+
+				if (cBase.g > .5) { cNew.g = 1 - (1 - 2 * (cBase.g - .5)) * (1 - cBlend.g); }
+				else { cNew.g = (2 * cBase.g) * cBlend.g; }
+
+				if (cBase.b > .5) { cNew.b = 1 - (1 - 2 * (cBase.b - .5)) * (1 - cBlend.b); }
+				else { cNew.b = (2 * cBase.b) * cBlend.b; }
+
+				cNew.a = 1.0;
+				return cNew;
+				*/
+				// Vectorized (easier for compiler)
+				float4 cNew;
+
+				// overlay has two output possbilities
+				// which is taken is decided if pixel value
+				// is below half or not
+
+				cNew = step(0.5, cBase);
+
+				// we pick either solution
+				// depending on pixel
+
+				// first is case of < 0.5
+				// second is case for >= 0.5
+
+				// interpolate between the two, 
+				// using color as influence value
+				cNew = lerp((cBase*cBlend * 2), (1.0 - (2.0*(1.0 - cBase)*(1.0 - cBlend))), cNew);
+
+				cNew.a = 1.0;
+				return cNew;
+			}
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 
@@ -60,15 +100,25 @@
 				fixed4 col = tex2D(_MainTex, i.uv);
 
 				fixed4 maskValue = tex2D(_MaskTex, i.uv);
-				fixed4 maskedCol = lerp(col, col * _Color, maskValue.r);
+
+				//fixed MixedCol = lerp(float4(0.5,0.5,0.5,1), col * _Color, maskValue.r);
+
+				fixed4 colorMask = lerp(float4(0.5, 0.5, 0.5, 1), col * _Color, maskValue.r);
+
+				fixed4 maskedCol = Overlay(col, colorMask);
+
 
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, col);				
 				return maskedCol;
 			}
+
+
+
 			ENDCG
 		}
 		
+
 
 			// Pass to render object as a shadow caster ( https://gist.github.com/pigeon6/4237385 )
 		Pass

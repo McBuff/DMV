@@ -157,12 +157,12 @@ Material:
         second: 0
       data:
         first:
-          name: _Outline
-        second: .00499999989
-      data:
-        first:
           name: _Mask
         second: 1
+      data:
+        first:
+          name: _Outline
+        second: .00499999989
       data:
         first:
           name: _Unlit
@@ -179,7 +179,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 0, b: 0, a: 1}
+        second: {r: 1, g: .972413957, b: 0, a: 1}
       data:
         first:
           name: _OutlineColor

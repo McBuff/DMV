@@ -794,7 +794,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101762}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -3.50999999, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 496650}
@@ -1320,6 +1320,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e04a7a41098191428abccd126e78b39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TargetArmature: {fileID: 0}
+  TargetBone: 
+  Rotation: 90
+  Offset: {x: 0, y: 0, z: 0}
   m_PlayerController: {fileID: 11477354}
 --- !u!114 &11426694
 MonoBehaviour:
@@ -1398,6 +1402,11 @@ MonoBehaviour:
   Prefab_FX_DeathEffect: {fileID: 113320, guid: 51ebf5a33ae525d4eae5b76e69f4ee7c,
     type: 2}
   Prefab_PlayerWeapon: {fileID: 111062, guid: 033ce987d9ac74b47b7eb4b81f9846d3, type: 2}
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   speed: 7
   rigidbody: {fileID: 0}
   m_Weapon: {fileID: 11457194}

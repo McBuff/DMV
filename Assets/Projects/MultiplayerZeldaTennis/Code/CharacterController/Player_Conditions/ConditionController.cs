@@ -60,8 +60,10 @@ public class ConditionController {
         /// Adds a condition to this controller owner ( Player )
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="netstarttime">Optional: starttime of this event over the network</param>
+        /// <param name="args">Group of arguments</param>
         /// <returns>New condition Component or Null if this condition is already on the player</returns>
-        public Condition AddCondition(Type type)
+        public Condition AddCondition(Type type, double netstarttime = 0d, object[] args = null)
         {
 #if DEBUG
             Debug.Log("Adding new condition");
@@ -73,6 +75,10 @@ public class ConditionController {
             m_ConditionsList.Add(newCondition);
 
             newCondition.SetConditionController(this);
+
+            // init additional data
+            newCondition.SetStartTime(netstarttime);
+            newCondition.SetArguments(args);
 
             return newCondition;
         }

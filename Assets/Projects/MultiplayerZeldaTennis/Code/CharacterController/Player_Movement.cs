@@ -125,7 +125,8 @@ namespace Player
             return inputDirection;
         }
 
-        Vector3 GetMaxMovementDirection(Vector3 inputDirection)
+
+        public Vector3 GetMaxMovementDirection(Vector3 inputDirection)
         {
             Vector3 result = inputDirection;
             // do 3 checks:

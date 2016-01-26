@@ -25,7 +25,15 @@ namespace Player
 
             h_Instance = this;
             m_PlayerInfoList = new List<PlayerInfo>(4) { new PlayerInfo(), new PlayerInfo(), new PlayerInfo(), new PlayerInfo() };
-            m_SlotColorList = new List<Color>(4) { Color.red, Color.green, Color.blue, Color.yellow };
+
+            // set default player colors
+            m_SlotColorList = new List<Color>(4)
+            {
+                new Color( 255f / 255f , 69f/255f , 0f ), // orange/red
+                new Color( 0f / 255f , 86f/255f , 255f/255f ), // blueish
+                new Color( 104f / 255f , 255f/255f , 0f/255f ), // greenish
+                new Color( 255f / 255f , 248f/255f , 0f/255f ), // yellowish
+            };
 
         }
 

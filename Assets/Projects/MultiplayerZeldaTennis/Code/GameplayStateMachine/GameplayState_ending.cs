@@ -56,7 +56,6 @@ namespace DMV.GameplaystateManager
             m_CountdownTextBuffer.Add("<b>Game will reset in 3 seconds...</b>");
             m_CountdownTextBuffer.Add("<b>Game will reset in 4 seconds...</b>");
 
-
             base.Init();
         }
 
@@ -71,9 +70,8 @@ namespace DMV.GameplaystateManager
 
                 int secondsLeft = m_Timer.GetSecondsLeft();
 
-#if (DEBUG)
-                Debug.Log(string.Format("Seconds left: {0} , countdownbufferLength: {1}", secondsLeft, m_CountdownTextBuffer.Count ));
-#endif 
+
+//                Debug.Log(string.Format("Seconds left: {0} , countdownbufferLength: {1}", secondsLeft, m_CountdownTextBuffer.Count ));
 
 
                 if( m_CountdownTextBuffer.Count - 1 == secondsLeft && (m_CountdownTextBuffer.Count != 0))

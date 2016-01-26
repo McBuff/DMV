@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 
 namespace Player
 {
@@ -10,6 +11,10 @@ namespace Player
         //------------
         public GameObject Prefab_FX_DeathEffect;
         public GameObject Prefab_PlayerWeapon;
+
+        // Events
+        //-------------
+        public UnityEvent OnDeath;
 
         // Network player, used to identity the player owning this object
         public PhotonPlayer Photonplayer;
@@ -97,6 +102,19 @@ namespace Player
             GetComponentInChildren<Renderer>().material.color = PlayerManager.GetInstance().GetPlayerSlotColor(photonPlayerSlot);
         }
 
+        public Color PlayerColor
+        {
+            
+            get
+            {
+                if (Photonplayer == null)
+                    return Color.magenta;
+
+                int photonPlayerSlot = PlayerManager.GetInstance().GetPlayerSlot(Photonplayer);
+                return PlayerManager.GetInstance().GetPlayerSlotColor(photonPlayerSlot);
+            }
+        }
+
         void Update()
         {
             m_Lifetime += Time.deltaTime;
@@ -180,6 +198,7 @@ namespace Player
         {
             Debug.Log("Destroying player object of player: " + Photonplayer);
 
+            OnDeath.Invoke();
 
             // add desintegration to my own Mesh
             //gameObject.AddComponent<Obliterate_Object>();

@@ -46,7 +46,8 @@ public class GameplayManager : Photon.MonoBehaviour {
             // create and init new state, send message to clients to change states
             if (m_NextStateType != m_CurrentState.GetCurrentStateType())
             {
-                Debug.Log("Server says: Changing state!");
+                
+                //Debug.Log("Server says: Changing state!");
                 photonView.RPC("SetGameplayState", PhotonTargets.Others, new object[] { (int)m_NextStateType, PhotonNetwork.time });
                 SetGameplayState((int)m_NextStateType, PhotonNetwork.time);
             }            
