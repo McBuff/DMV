@@ -44,11 +44,11 @@ public class countdownText : MonoBehaviour {
 
     public void StartCountdown(double endTime, double startTime = -1)
     {
-#if DEBUG
-        Debug.LogWarning("Starting countdown: " + endTime + ", " + startTime);
-#endif
+        
+        //Debug.LogWarning("Starting countdown: " + endTime + ", " + startTime);
+
         m_Timer = new Local_Timer();
-        Debug.LogWarning(m_Timer);
+        
         m_Timer.StartTimer(endTime);
     }
 }

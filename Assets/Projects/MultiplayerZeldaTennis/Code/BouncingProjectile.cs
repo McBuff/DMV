@@ -519,7 +519,7 @@ public class BouncingProjectile : Photon.MonoBehaviour{
 
         if (MovementSpeed == 0)
             AdjustMovementSpeed(+8.0f);
-        else AdjustMovementSpeed(+5f);
+        else AdjustMovementSpeed(+2.5f);
 
         Direction = newDirection;
         // add new keyframe

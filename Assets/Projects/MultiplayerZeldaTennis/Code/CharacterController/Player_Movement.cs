@@ -18,8 +18,12 @@ namespace Player
         // Contains received server keyframes sorted by timestamp (double)
         private KeyframeList<Vector3> m_PositionKeyFrames;
 
-        [System.Obsolete("use  Playercontroller.Conditions instead")]
-        public bool isFrozen;
+        private bool m_isMoving;
+        public bool isMoving
+        {
+            get { return m_isMoving; }
+        }
+
 
         // Component References
         PlayerController m_PlayerController;
@@ -48,6 +52,8 @@ namespace Player
                 {
                     transform.position += actualMoveDirection * MovementSpeed * Time.deltaTime;
                     m_PreviousMovement = actualMoveDirection * MovementSpeed * Time.deltaTime;
+
+                    m_isMoving = (actualMoveDirection.magnitude > 0);
                 }
 
             }
@@ -66,6 +72,7 @@ namespace Player
 
                     transform.position = newPosition;
                     m_PreviousMovement = newPosition - oldPos;
+                    m_isMoving = (m_PreviousMovement.magnitude > 0);
                 }
             }
         }

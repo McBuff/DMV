@@ -142,8 +142,12 @@ namespace Player
 
         public int GetPlayerSlot(PhotonPlayer player)
         {
+            if (player == null)
+                return -1;
+
             for (int i = 0; i < m_PlayerInfoList.Count; i++)
-            {
+            {   
+                
                 if (m_PlayerInfoList[i].PhotonPlayer == null)
                     continue;
                 if (m_PlayerInfoList[i].PhotonPlayer.ID == player.ID)

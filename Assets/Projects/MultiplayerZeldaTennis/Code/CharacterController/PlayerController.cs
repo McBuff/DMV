@@ -17,7 +17,12 @@ namespace Player
         public UnityEvent OnDeath;
 
         // Network player, used to identity the player owning this object
-        public PhotonPlayer Photonplayer;
+        private PhotonPlayer m_photonPlayer;
+        public PhotonPlayer Photonplayer
+        {
+            get { return m_photonPlayer; }
+            set { m_photonPlayer = value; }
+        }
 
         public ConditionController Conditions;
 
@@ -27,6 +32,20 @@ namespace Player
 
         new public Rigidbody rigidbody;
         public Player_Weapon m_Weapon;
+
+        public Color PlayerColor
+        {
+
+            get
+            {
+                if (Photonplayer == null)
+                    return Color.magenta; // error color
+
+                int photonPlayerSlot = PlayerManager.GetInstance().GetPlayerSlot(Photonplayer);
+                return PlayerManager.GetInstance().GetPlayerSlotColor(photonPlayerSlot);
+            }
+        }
+
 
         // State Machine related:
         //-----------------------
@@ -63,7 +82,6 @@ namespace Player
 
         private Vector3 Direction;
         private float m_Lifetime;
-        private ArrayList m_NetworkPackagesList;
 
         void Awake()
         {
@@ -73,47 +91,27 @@ namespace Player
         }
         void Start()
         {
-            m_NetworkPackagesList = new ArrayList();
+         
             rigidbody = GetComponent<Rigidbody>();
             Direction = Vector3.zero;
 
             m_CurrentState = PlayerState.movement;
             m_CurrentStateStartTime = 0;
 
+            // Update player color
+            GetComponentInChildren<Renderer>().material.color = PlayerColor;
 
             // Load Player Weapon
             if (Prefab_PlayerWeapon == null)
                 Debug.LogWarning("PlayerController: " + Photonplayer.name + " does not have a weapon assigned!");
+
             GameObject playerWeaponObject = (GameObject)Instantiate(Prefab_PlayerWeapon, transform.position, transform.rotation);
             m_Weapon = playerWeaponObject.GetComponent<Player_Weapon>();
             playerWeaponObject.transform.SetParent(this.transform);
         }
 
-        void OnPhotonInstantiate(PhotonMessageInfo info)
-        {
-            // I need to figure out who owns me, and update that knowledge in PlayerManager
-            PhotonPlayer sender = info.sender;
-            Photonplayer = sender;
-            PlayerManager.GetInstance().AssignPlayerObjectToPlayer(this, sender);
 
-            //DEBUG:      
-            // Set color of object to Slot Color
-            int photonPlayerSlot = PlayerManager.GetInstance().GetPlayerSlot(sender);
-            GetComponentInChildren<Renderer>().material.color = PlayerManager.GetInstance().GetPlayerSlotColor(photonPlayerSlot);
-        }
 
-        public Color PlayerColor
-        {
-            
-            get
-            {
-                if (Photonplayer == null)
-                    return Color.magenta;
-
-                int photonPlayerSlot = PlayerManager.GetInstance().GetPlayerSlot(Photonplayer);
-                return PlayerManager.GetInstance().GetPlayerSlotColor(photonPlayerSlot);
-            }
-        }
 
         void Update()
         {
@@ -217,34 +215,19 @@ namespace Player
             // Log player death
             string deathMessage = "";
 
+            
             int playerSlot = PlayerManager.GetInstance().GetPlayerSlot(Photonplayer);
-            Color playerColor = PlayerManager.GetInstance().GetPlayerSlotColor(playerSlot);
-            deathMessage = "<b>" + ColorUtility.ColorRichtText(playerColor, Photonplayer.name) + "</b>" + " was vaporized!";
+
+            string playerName = "";
+            if (playerSlot < 0)
+                playerName = "debugplayer";
+            else playerName = Photonplayer.name;
+
+
+            //Color playerColor = PlayerManager.GetInstance().GetPlayerSlotColor(playerSlot);
+            deathMessage = "<b>" + ColorUtility.ColorRichtText(PlayerColor, playerName) + "</b>" + " was vaporized!";
 
             EventLog.GetInstance().LogMessage(deathMessage);
-        }
-
-        [System.Obsolete("Add player condition instead of adding in freeze bools and somesuch")]
-        public void Freeze(bool freeze_position, bool freeze_lookat)
-        {
-            
-            //Player_Movement movementComp = GetComponent<Player_Movement>();
-            Player_Orientation lookAtComp = GetComponent<Player_Orientation>();
-            //movementComp.enabled = !freeze;
-            
-            if( Conditions == null)
-            { 
-                Conditions = new ConditionController(this);
-            }
-
-            if( freeze_position )
-                Conditions.AddCondition(typeof(Condition_Frozen));
-            
-
-            //movementComp.isFrozen = freeze_position;
-
-
-            lookAtComp.isFrozen = freeze_lookat;
         }
 
         /// <summary>
@@ -312,60 +295,20 @@ namespace Player
 
         }
 
+        // Network communication ( .. is this even relevant anymore?? )
         void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            // send position to clients & server?
-            if (stream.isWriting)
-            {
-                // send server position, direction, and the lifetime at which this snapshot was taken
-                stream.SendNext(transform.position);
-                stream.SendNext(Direction);
-                stream.SendNext(transform.rotation.eulerAngles.y); // send Y rotation
-                stream.SendNext(m_Lifetime);
-            }
-            else
-            {
-                // receive and store data for prediction
-                networkData newPacket = new networkData();
-
-                newPacket.P = (Vector3)stream.ReceiveNext();
-                newPacket.V = (Vector3)stream.ReceiveNext();
-                newPacket.Rotation = (float)stream.ReceiveNext();
-                newPacket.Lifetime = (float)stream.ReceiveNext();
-                newPacket.cT = Time.time; // client time I received this package
-
-                if (m_NetworkPackagesList == null)
-                    m_NetworkPackagesList = new ArrayList();
-
-                m_NetworkPackagesList.Add(newPacket);
-
-                // wiat for 2 first packages
-                if (m_NetworkPackagesList.Count < 2)
-                {
-                    // some initting for late joiners
-                    m_Lifetime = newPacket.Lifetime;// - 0.1f;
-                                                    //newPacket.Lifetime += .1f;
-                                                    // double package and teleport deathball to server's given position
-                    m_NetworkPackagesList.Add(newPacket);
-                    transform.position = newPacket.P;
-                }
-
-                // remove packages that are no longer needed
-                if (m_NetworkPackagesList.Count >= 2)
-                {
-                    float nextPackageLifetime = ((networkData)m_NetworkPackagesList[1]).Lifetime;
-
-                    // remove first package, local lifetime has passed beyond first-second package range
-                    if (m_Lifetime > nextPackageLifetime)
-                    {
-                        m_NetworkPackagesList.RemoveAt(0);
-                    }
-                }
-
-            }
-
+            
         }
 
+
+        void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
+            // I need to figure out who owns me, and update that knowledge in PlayerManager
+            PhotonPlayer sender = info.sender;
+            Photonplayer = sender;
+            PlayerManager.GetInstance().AssignPlayerObjectToPlayer(this, sender);
+        }
 
     }
 

@@ -15,6 +15,9 @@ namespace Player
         protected float m_Speed;
         protected float m_SpeedFallof;
 
+        protected const string m_particleEffectName = "Effects/FX_KnockbackSmoke";
+        protected GameObject m_particleEffectObject;
+
         // Unity's Methods
         //---------
         // Use this for initialization
@@ -30,6 +33,10 @@ namespace Player
             m_Duration = 1f; // debug value, load this using a settings mechanic later (.4 seems about right, maybe even .3 )
             m_Speed = 20f;
             m_SpeedFallof = 1f;
+
+            // add the knockback particle effect
+            m_particleEffectObject = (GameObject) Instantiate( Resources.Load(m_particleEffectName) , transform.position +  Vector3.up * .3f , transform.rotation );
+            m_particleEffectObject.transform.parent = this.transform;
         }
 
         // Update is called once per frame
@@ -48,6 +55,8 @@ namespace Player
             double targetTime = (m_StartTime + m_Duration);
             if (targetTime  <= GameTime.Instance.Time)
             {
+                // destroy particle effect
+                GameObject.Destroy(m_particleEffectObject);
                 Debug.Log(string.Format("Knockback ended at time {0} , was given {1} , startime: {2} , duration {3}", new object[] { GameTime.Instance.Time, targetTime, m_StartTime, m_Duration }));
                 m_ConditionController.RemoveCondition( this.GetType());
             }

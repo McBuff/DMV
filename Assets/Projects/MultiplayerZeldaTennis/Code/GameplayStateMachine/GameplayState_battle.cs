@@ -19,7 +19,7 @@ namespace DMV.GameplaystateManager
             // Set all player positions to their respective spawn positions and enable movement
             PlayerManager.GetInstance().SpawnPlayers_All(); // I respawn everyone
 
-            // Make sure to UnRoot all players
+            // Make sure to UnRoot all players ( cleanse players of anything anyway )
             PlayerManager.GetInstance().RemovePlayerConditions_All();
             
             // Server owner spawns a deathball in the middle of the room
